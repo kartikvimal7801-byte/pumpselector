@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pump Service Support Required</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="scripts/wealthness.js" defer></script>
+  <style>
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #ffcc00;
+      color: #003366;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+    }
+    .back-button:hover {
+      background-color: #ffd633;
+    }
+    .toggle-button {
+      background-color: #eee;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      margin-right: 10px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+    .toggle-button.active {
+      background-color: #003366;
+      color: #ffcc00;
+      box-shadow: inset 2px 2px 6px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+
+  <div class="selection-container">
+    <img src="assets/havells-logo.png" alt="Havells Logo" class="logo">
+    <h1>Pump Service Support Required</h1>
+
+    <div class="action-buttons">
+      <button type="button" id="checkBtn" class="toggle-button active">🔍 Check Problem</button>
+      <button type="button" id="videoBtn" class="toggle-button">🎥 Troubleshoot Videos</button>
+    </div>
+
+    <form id="wealthForm">
+      <div id="problemSection">
+        <label>Model No.</label>
+        <input type="text" name="model" placeholder="Enter model number" required>
+
+        <label>What is the problem?</label>
+        <select name="problem" id="problemSelect" required>
+          <option value="">-- Select a problem --</option>
+          <option>Pump does not deliver water</option>
+          <option>Insufficient capacity delivered</option>
+          <option>Insufficient pressure delivered</option>
+          <option>Pump loses prime after starting</option>
+          <option>Pump requires excessive power</option>
+          <option>Leaks excessively</option>
+          <option>Seal has short life</option>
+          <option>Pump vibrates or is noisy</option>
+          <option>Bearings have short life</option>
+          <option>Pump overheats and seizes</option>
+        </select>
+      </div>
+
+      <div id="videoSection" style="display:none;">
+        <label>Type of Pump</label>
+        <select name="pumpType" id="pumpTypeSelect">
+          <option value="">-- Select pump type --</option>
+          <option value="mmb">Mini Mono Block (MMB)</option>
+          <option value="pp">Pressure Pump (PP)</option>
+          <option value="bws">Bore Well Submersible (BWS)</option>
+          <option value="ow">Open Well (OW)</option>
+          <option value="type5">Type 5</option>
+          <option value="type6">Type 6</option>
+        </select>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="solutionBox" style="margin-top:20px;"></div>
+    <div id="resultBox" style="margin-top:20px;"></div>
+    <div id="videoBox" style="margin-top:20px;"></div>
+  </div>
+</body>
+</html>
