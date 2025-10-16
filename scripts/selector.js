@@ -331,6 +331,33 @@ function togglePumpStages() {
   async function getRecommendation(formData) {
     if (!resultBox) return;
     
+    // Show loading animation
+    resultBox.innerHTML = `
+      <div style="background: linear-gradient(135deg, #e6f7ff, #b3e5fc); padding: 20px; border-radius: 12px; margin-top: 20px;">
+        <div style="text-align: center;">
+          <div style="font-size: 2em; margin-bottom: 15px;">🔍</div>
+          <h2 style="color: #003366; margin-bottom: 10px;">Searching for the Best Pumps...</h2>
+          <div style="background: white; padding: 15px; border-radius: 8px;">
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+              <div style="width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #003366; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px;"></div>
+              <span style="color: #003366; font-weight: bold;">Analyzing ${pumpDatabase.length || '100+'} pump models...</span>
+            </div>
+            <p style="color: #666; margin: 0;">Please wait while we find the perfect match for your requirements.</p>
+          </div>
+        </div>
+      </div>
+      <style>
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+    `;
+    resultBox.style.display = 'block';
+    
+    // Add 3-second delay for loading effect
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
     // Load pump data if not already loaded
     if (pumpDatabase.length === 0) {
       await loadPumpData();
@@ -384,23 +411,30 @@ function togglePumpStages() {
       hp = Math.max(0.5, hp);
     }
 
-    // Find matching pumps from real data
+    // Find matching pumps from real data - More flexible matching
     const matches = pumpDatabase
-      .filter(pump => {
-        const headMatch = pump.headMax >= head * 0.8; // Allow 20% tolerance
-        const flowMatch = pump.flowMax >= flow * 0.8; // Allow 20% tolerance
-        const hpMatch = pump.hp >= hp * 0.7; // Allow 30% tolerance for HP
-        const voltageMatch = pump.voltage.toString().includes(voltage.toString());
+      .map(pump => {
+        // Calculate compatibility scores for each criterion
+        const headScore = pump.headMax >= head ? 100 : Math.max(0, (pump.headMax / head) * 100);
+        const flowScore = pump.flowMax >= flow ? 100 : Math.max(0, (pump.flowMax / flow) * 100);
+        const hpScore = pump.hp >= hp ? 100 : Math.max(0, (pump.hp / hp) * 100);
+        const voltageMatch = pump.voltage.toString().includes(voltage.toString()) ? 100 : 0;
         
-        return headMatch && flowMatch && hpMatch && voltageMatch;
+        // Calculate overall compatibility (weighted average)
+        const overallCompatibility = (headScore * 0.3 + flowScore * 0.3 + hpScore * 0.2 + voltageMatch * 0.2);
+        
+        return {
+          ...pump,
+          compatibility: Math.round(overallCompatibility),
+          headScore: Math.round(headScore),
+          flowScore: Math.round(flowScore),
+          hpScore: Math.round(hpScore),
+          voltageScore: voltageMatch
+        };
       })
-      .sort((a, b) => {
-        // Sort by closest match to requirements
-        const scoreA = Math.abs(a.hp - hp) + Math.abs(a.headMax - head) / 100 + Math.abs(a.flowMax - flow) / 1000;
-        const scoreB = Math.abs(b.hp - hp) + Math.abs(b.headMax - head) / 100 + Math.abs(b.flowMax - flow) / 1000;
-        return scoreA - scoreB;
-      })
-      .slice(0, 5); // Top 5 matches
+      .filter(pump => pump.compatibility >= 20) // Show pumps with at least 20% compatibility
+      .sort((a, b) => b.compatibility - a.compatibility) // Sort by compatibility (highest first)
+      .slice(0, 8); // Top 8 matches
 
     // Display results
     let html = `
@@ -417,7 +451,22 @@ function togglePumpStages() {
       html += '<h3 style="color: #004080; margin-bottom: 15px;">🎯 Best Matches:</h3>';
       
       matches.forEach((pump, index) => {
-        const compatibility = Math.round(((pump.headMax >= head ? 1 : 0) + (pump.flowMax >= flow ? 1 : 0) + (pump.hp >= hp ? 1 : 0)) / 3 * 100);
+        // Determine compatibility color and badge
+        let compatibilityColor, compatibilityBadge;
+        if (pump.compatibility >= 80) {
+          compatibilityColor = '#2e7d32';
+          compatibilityBadge = '🟢 Excellent Match';
+        } else if (pump.compatibility >= 60) {
+          compatibilityColor = '#f57c00';
+          compatibilityBadge = '🟡 Good Match';
+        } else if (pump.compatibility >= 40) {
+          compatibilityColor = '#f9a825';
+          compatibilityBadge = '🟠 Fair Match';
+        } else {
+          compatibilityColor = '#d32f2f';
+          compatibilityBadge = '🔴 Basic Match';
+        }
+
         html += `
           <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: ${index === 0 ? '#f0f8ff' : '#fff'};">
             <h4 style="color: #003366; margin-bottom: 8px;">${index + 1}. ${pump.model} ${index === 0 ? '⭐ (Best Match)' : ''}</h4>
@@ -425,8 +474,18 @@ function togglePumpStages() {
             <p><strong>Series:</strong> ${pump.series} | <strong>HP:</strong> ${pump.hp} | <strong>Power:</strong> ${pump.powerKw}</p>
             <p><strong>Head:</strong> ${Math.round(pump.headMax)} ft | <strong>Flow:</strong> ${Math.round(pump.flowMax/60)} LPM</p>
             <p><strong>Voltage:</strong> ${pump.voltage} | <strong>Application:</strong> ${pump.application}</p>
-            <div style="background: #e8f5e8; padding: 5px; border-radius: 4px; margin-top: 8px;">
-              <span style="color: #2e7d32; font-weight: bold;">Compatibility: ${compatibility}%</span>
+            
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="color: ${compatibilityColor}; font-weight: bold; font-size: 1.1em;">${compatibilityBadge}</span>
+                <span style="color: ${compatibilityColor}; font-weight: bold;">${pump.compatibility}%</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.9em;">
+                <span>Head: ${pump.headScore}%</span>
+                <span>Flow: ${pump.flowScore}%</span>
+                <span>HP: ${pump.hpScore}%</span>
+                <span>Voltage: ${pump.voltageScore}%</span>
+              </div>
             </div>
           </div>
         `;
@@ -486,6 +545,12 @@ function togglePumpStages() {
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         setTimeout(() => {
+          // Clear recommendations immediately
+          if (resultBox) {
+            resultBox.innerHTML = '';
+            resultBox.style.display = 'none';
+          }
+          
           // Restore delivery to original (non-faucet)
           if (deliveryLabel) deliveryLabel.textContent = 'Where do you want the water to reach (पानी कहाँ तक पहुंचाना है)';
           if (deliverySelect) {
@@ -510,8 +575,6 @@ function togglePumpStages() {
           waterLevelSelect.value = '';
           // Hide height dropdown
           if (heightDropdownBox) heightDropdownBox.style.display = 'none';
-          // Hide result
-          if (resultBox) resultBox.style.display = 'none';
           // Reset selects to defaults and re-filter
           if (purposeSelect) purposeSelect.value = '';
           if (locationSelect) locationSelect.value = '';
@@ -520,7 +583,7 @@ function togglePumpStages() {
           filterByLocation();
           toggleWaterLevel();
           toggleCustomHeight();
-          console.log('Form reset - All fields restored'); // Debug
+          console.log('Form reset - All fields and recommendations cleared'); // Debug
         }, 10); // Small delay for form.reset() to complete
       });
     }
