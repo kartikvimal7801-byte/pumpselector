@@ -48,13 +48,45 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Water Level Select Found:', waterLevelSelect);
   console.log('Usage Select Found:', usageSelect);
 
-  // 📊 Placeholder Pump Database (expand with real data)
-  const pumpDatabase = [
-    { model: 'Havells Premium 1HP', hp: 1, headMax: 100, flowMax: 500, voltage: 220, type: 'single-phase', quality: 'premium', price: 5000 },
-    { model: 'Havells Standard 1.5HP', hp: 1.5, headMax: 150, flowMax: 1000, voltage: 220, type: 'single-phase', quality: 'standard', price: 7000 },
-    { model: 'Havells Economical 2HP', hp: 2, headMax: 200, flowMax: 2000, voltage: 415, type: 'three-phase', quality: 'economical', price: 8000 },
-    { model: 'Havells Agri 3HP', hp: 3, headMax: 300, flowMax: 3000, voltage: 415, type: 'three-phase', quality: 'premium', price: 12000 },
-  ];
+  // 📊 Real Pump Database from JSON
+  let pumpDatabase = [];
+
+  // Load pump data from JSON file
+  async function loadPumpData() {
+    try {
+      const response = await fetch('scripts/pump-data.json');
+      const data = await response.json();
+      
+      // Skip the header row and process actual pump data
+      pumpDatabase = data.slice(1).map(pump => ({
+        model: pump.Column21 || 'Unknown Model',
+        productCode: pump.Column20 || 'N/A',
+        series: pump.Column15 || 'Unknown Series',
+        hp: parseFloat(pump.Column24?.replace('HP', '') || '0'),
+        powerKw: pump.Column23 || 'N/A',
+        voltage: pump.Column28 || 'N/A',
+        headRange: pump.Column25 || 'N/A',
+        flowRange: pump.Column27 || 'N/A',
+        headMax: parseFloat(pump.Column14 || '0') * 3.28084, // Convert meters to feet
+        flowMax: parseFloat(pump.Column19 || '0'), // L/h
+        application: pump.Column3 || 'General',
+        category: pump.Column12 || 'General',
+        phase: pump.Column2 || 'Unknown',
+        oilFilled: pump.Column10 || 'Unknown',
+        buildingFloor: pump.Column13 || 'N/A'
+      })).filter(pump => pump.model !== 'Unknown Model' && pump.hp > 0);
+      
+      console.log('Loaded pump data:', pumpDatabase.length, 'pumps');
+    } catch (error) {
+      console.error('Error loading pump data:', error);
+      // Fallback to basic data
+      pumpDatabase = [
+        { model: 'S2', hp: 0.5, headMax: 111, flowMax: 2700, voltage: '220V', application: 'General' },
+        { model: 'S1', hp: 0.37, headMax: 85, flowMax: 2000, voltage: '220V', application: 'General' },
+        { model: 'S1.5 W', hp: 0.75, headMax: 130, flowMax: 3000, voltage: '220V', application: 'General' }
+      ];
+    }
+  }
 
   // 🔄 Mode Toggle Function
   window.setMode = function(mode) {
@@ -295,11 +327,17 @@ function togglePumpStages() {
     toggleWaterLevel(); // Toggle based on source
   }
 
-  // 🔍 Get Recommendation (updated for waterLevel ranges)
-  function getRecommendation(formData) {
+  // 🔍 Get Recommendation (using real pump data)
+  async function getRecommendation(formData) {
     if (!resultBox) return;
+    
+    // Load pump data if not already loaded
+    if (pumpDatabase.length === 0) {
+      await loadPumpData();
+    }
+    
     const isSimple = simpleMode && simpleMode.style.display !== 'none';
-    let head = 0, flow = 0, hp = 0, voltage = parseInt(formData.phase || 220), quality = formData.quality || 'standard';
+    let head = 0, flow = 0, hp = 0, voltage = parseInt(formData.phase || 220);
 
     if (!isSimple) {
       // Advanced mode: Direct inputs
@@ -307,7 +345,7 @@ function togglePumpStages() {
       flow = parseFloat(formData.flow || 0);
       hp = parseFloat(formData.hp || 0);
     } else {
-      // Simple mode calcs
+      // Simple mode calculations
       // Depth from water level ranges (average)
       let depth = 0;
       if (formData.waterLevel) {
@@ -322,7 +360,7 @@ function togglePumpStages() {
       // Check if in faucet mode (pressure)
       const isFaucetMode = formData.faucetCount || (formData.delivery && ['1','2','4','6','8'].includes(formData.delivery));
       if (isFaucetMode) {
-        head += 15; // Default pressure head (override depth to 0 for roof-tank)
+        head += 15; // Default pressure head
         depth = 0; // No suction for pressure
         const faucetMap = { 1: 20, 2: 40, 4: 80, 6: 120, 8: 160 };
         flow = faucetMap[formData.faucetCount || formData.delivery] || 40;
@@ -336,35 +374,89 @@ function togglePumpStages() {
         };
         flow = usageMap[formData.usage] || 500;
       }
-      // Rough HP calc: HP ≈ (head_ft * flow_gpm) / 3960 (simplified; LPM to GPM conversion)
-      const flowGpm = (flow / 3.785) / 60; // LPM to GPM (liters per minute to gallons per minute)
-      hp = Math.ceil((head * flowGpm) / 3960 * 1.5); // Factor for efficiency/losses
-      hp = Math.max(0.5, hp); // Min 0.5HP
+      
+      // Convert flow from LPM to L/h for comparison
+      flow = flow * 60; // Convert LPM to L/h
+      
+      // Rough HP calculation
+      const flowGpm = (flow / 3.785) / 60; // L/h to GPM
+      hp = Math.ceil((head * flowGpm) / 3960 * 1.5);
+      hp = Math.max(0.5, hp);
     }
 
-    // Match to database
-    const matches = pumpDatabase.filter(pump => 
-      pump.headMax >= head && pump.flowMax >= flow && 
-      (pump.voltage === voltage || pump.voltage >= voltage) &&
-      pump.quality === quality &&
-      pump.hp >= hp - 0.5 // Close match
-    ).slice(0, 3); // Top 3
+    // Find matching pumps from real data
+    const matches = pumpDatabase
+      .filter(pump => {
+        const headMatch = pump.headMax >= head * 0.8; // Allow 20% tolerance
+        const flowMatch = pump.flowMax >= flow * 0.8; // Allow 20% tolerance
+        const hpMatch = pump.hp >= hp * 0.7; // Allow 30% tolerance for HP
+        const voltageMatch = pump.voltage.toString().includes(voltage.toString());
+        
+        return headMatch && flowMatch && hpMatch && voltageMatch;
+      })
+      .sort((a, b) => {
+        // Sort by closest match to requirements
+        const scoreA = Math.abs(a.hp - hp) + Math.abs(a.headMax - head) / 100 + Math.abs(a.flowMax - flow) / 1000;
+        const scoreB = Math.abs(b.hp - hp) + Math.abs(b.headMax - head) / 100 + Math.abs(b.flowMax - flow) / 1000;
+        return scoreA - scoreB;
+      })
+      .slice(0, 5); // Top 5 matches
 
     // Display results
-    let html = `<h2>Recommended Pumps</h2><p><strong>Calculated Needs:</strong> Head: ${head} ft, Flow: ${flow} LPM, HP: ~${hp}, Voltage: ${voltage}V, Quality: ${quality}</p>`;
+    let html = `
+      <div style="background: linear-gradient(135deg, #e6f7ff, #b3e5fc); padding: 20px; border-radius: 12px; margin-top: 20px;">
+        <h2 style="color: #003366; margin-bottom: 15px;">🔍 Pump Recommendations</h2>
+        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+          <h3 style="color: #004080; margin-bottom: 10px;">Your Requirements:</h3>
+          <p><strong>Head:</strong> ${Math.round(head)} ft | <strong>Flow:</strong> ${Math.round(flow/60)} LPM | <strong>HP:</strong> ~${hp} | <strong>Voltage:</strong> ${voltage}V</p>
+        </div>
+    `;
+
     if (matches.length > 0) {
-      html += '<ul>';
-      matches.forEach(pump => {
-        html += `<li>${pump.model} (${pump.hp}HP, Head up to ${pump.headMax}ft, Flow up to ${pump.flowMax}LPM) - ₹${pump.price}</li>`;
+      html += '<div style="background: white; padding: 15px; border-radius: 8px;">';
+      html += '<h3 style="color: #004080; margin-bottom: 15px;">🎯 Best Matches:</h3>';
+      
+      matches.forEach((pump, index) => {
+        const compatibility = Math.round(((pump.headMax >= head ? 1 : 0) + (pump.flowMax >= flow ? 1 : 0) + (pump.hp >= hp ? 1 : 0)) / 3 * 100);
+        html += `
+          <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: ${index === 0 ? '#f0f8ff' : '#fff'};">
+            <h4 style="color: #003366; margin-bottom: 8px;">${index + 1}. ${pump.model} ${index === 0 ? '⭐ (Best Match)' : ''}</h4>
+            <p><strong>Product Code:</strong> ${pump.productCode}</p>
+            <p><strong>Series:</strong> ${pump.series} | <strong>HP:</strong> ${pump.hp} | <strong>Power:</strong> ${pump.powerKw}</p>
+            <p><strong>Head:</strong> ${Math.round(pump.headMax)} ft | <strong>Flow:</strong> ${Math.round(pump.flowMax/60)} LPM</p>
+            <p><strong>Voltage:</strong> ${pump.voltage} | <strong>Application:</strong> ${pump.application}</p>
+            <div style="background: #e8f5e8; padding: 5px; border-radius: 4px; margin-top: 8px;">
+              <span style="color: #2e7d32; font-weight: bold;">Compatibility: ${compatibility}%</span>
+            </div>
+          </div>
+        `;
       });
-      html += '</ul>';
+      
+      html += '</div>';
     } else {
-      html += '<p>No exact match—consider custom or contact support.</p>';
+      html += `
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px;">
+          <h3 style="color: #856404;">⚠️ No Exact Matches Found</h3>
+          <p style="color: #856404;">We couldn't find pumps that exactly match your requirements. Consider:</p>
+          <ul style="color: #856404;">
+            <li>Adjusting your flow or head requirements</li>
+            <li>Contacting our technical support for custom solutions</li>
+            <li>Using a pump with higher specifications</li>
+          </ul>
+        </div>
+      `;
     }
-    html += `<p><em>Based on your inputs: ${JSON.stringify(Object.fromEntries(formData), null, 2)}</em></p>`;
+
+    html += `
+      <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.9em; color: #666;">
+        <p><em>💡 Recommendations based on your inputs and Havells pump specifications.</em></p>
+      </div>
+    </div>
+    `;
+
     resultBox.innerHTML = html;
     resultBox.style.display = 'block';
-    console.log('Recommendation generated:', { head, flow, hp, matches: matches.length }); // Debug
+    console.log('Recommendation generated:', { head, flow, hp, matches: matches.length });
   }
 
   // 📝 Event Listeners
@@ -378,7 +470,7 @@ function togglePumpStages() {
   if (locationSelect) locationSelect.addEventListener('change', filterByLocation);
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
@@ -387,7 +479,7 @@ function togglePumpStages() {
         alert('Please select purpose and location.');
         return;
       }
-      getRecommendation(data);
+      await getRecommendation(data);
     });
 
     const resetBtn = form.querySelector('button[type="reset"]');
