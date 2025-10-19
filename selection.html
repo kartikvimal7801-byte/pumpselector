@@ -78,6 +78,9 @@
           <!-- Keep other options too, they'll be hidden dynamically -->
         </select>
 
+        <label id="constructionSourceLabel" style="display:none;">Where is the water coming from for construction (निर्माण के लिए पानी कहाँ से आ रहा है)</label>
+        <select id="constructionSourceSelect" style="display:none;"></select>
+
     <label for="waterLevelSelect">Water level from ground (ज़मीन से पानी की गहराई)</label>
 <select id="waterLevelSelect" name="waterLevel">
   <option value="0-5">(0–5) foot from ground (०–५ फुट ज़मीन से नीचे)</option>
@@ -245,6 +248,9 @@
       <button type="submit" form="pumpForm">🔍 Get Recommendation</button>
       <button type="reset" form="pumpForm">🔄 Reset Form</button>
     </div>
+  <div style="text-align:center; margin: 12px 0 0; color:#cc5500; font-weight:bold;">
+    Contact for Customer Support - 9873441650
+  </div>
 
     <div id="resultBox"></div>
   </div>
