@@ -12,8 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
   const purposeSelect = document.getElementById('purpose') || document.querySelector('select[name="purpose"]');
+  const allPurposeSelects = Array.from(document.querySelectorAll('select[name="purpose"], #purpose'));
   const locationSelect = document.querySelector('select[name="location"]');
   const sourceSelect = document.getElementById('sourceSelect') || document.querySelector('select[name="source"]');
+  const constructionSourceSelect = document.getElementById('constructionSourceSelect');
+  const constructionSourceLabel = document.getElementById('constructionSourceLabel');
   const waterLevelSelect = document.getElementById('waterLevelSelect') || document.querySelector('select[name="waterLevel"]');
   const waterLevelLabel = waterLevelSelect ? waterLevelSelect.previousElementSibling : document.querySelector('label[for="waterLevelSelect"]');
   const deliverySelect = document.getElementById('deliverySelect') || document.querySelector('select[name="delivery"]');
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🎚️ Toggle Pump Stages visibility based on purpose + location
   function togglePumpStages() {
     const borewellOptions = ['3borwp', '4borwp', '5borwp', '6borwp', '7borwp', '8borwp'];
-    const isBorewell = borewellOptions.includes(purposeSelect?.value);
+    const isBorewell = borewellOptions.includes(getCurrentPurposeValue());
     const isMultiStage = locationSelect?.value === 'MStage';
     const stageBox = document.getElementById('stageBox');
 
@@ -31,7 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
       stageBox.style.display = (isBorewell && isMultiStage) ? 'block' : 'none';
     }
   }
-
+  // Helper: get current visible purpose value (handles duplicate selects in Simple/Advanced)
+  function getCurrentPurposeValue() {
+    const visiblePurpose = allPurposeSelects.find(sel => sel && sel.offsetParent !== null);
+    const value = (visiblePurpose || purposeSelect)?.value || '';
+    return value.toLowerCase();
+  }
 
   
   
@@ -101,10 +109,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (purposeSelect) purposeSelect.dispatchEvent(new Event('change'));
   };
 
+  // Helper: get currently active source select (construction vs default)
+  function getActiveSourceSelect() {
+    if (constructionSourceSelect && constructionSourceSelect.style.display !== 'none') {
+      return constructionSourceSelect;
+    }
+    return sourceSelect;
+  }
+
   // 💧 Water Level Toggle Based on Source (adapted for select ranges)
   function toggleWaterLevel() {
-    if (!sourceSelect || !waterLevelSelect || !waterLevelLabel) return;
-    const selected = sourceSelect.value.toLowerCase();
+    const activeSource = getActiveSourceSelect();
+    if (!activeSource || !waterLevelSelect || !waterLevelLabel) return;
+    const selected = (activeSource.value || '').toLowerCase();
     const depthSources = ['open well', 'borewell', 'underground tank', 'pond', 'river'];
     const showWaterLevel = depthSources.includes(selected);
 
@@ -136,6 +153,78 @@ function togglePumpStages() {
 }
 
 
+  // 🔒 Limit source options for Agriculture: show only first 4 options + Pond
+  function limitSourcesForAgriculture() {
+    if (!sourceSelect) return;
+    // Reset visibility first
+    Array.from(sourceSelect.options).forEach(option => {
+      option.hidden = false;
+      option.style.display = '';
+    });
+    // Collect first 4 non-empty options as allowed
+    const nonEmptyOptions = Array.from(sourceSelect.options).filter(o => o.value !== '');
+    const firstFour = nonEmptyOptions.slice(0, 4);
+    const allowedValues = new Set(firstFour.map(o => o.value.toLowerCase()));
+    allowedValues.add('pond');
+
+    Array.from(sourceSelect.options).forEach(option => {
+      if (option.value === '') return; // keep placeholder visible
+      const isAllowed = allowedValues.has(option.value.toLowerCase());
+      option.hidden = !isAllowed;
+      option.style.display = isAllowed ? '' : 'none';
+    });
+
+    // Auto-select first visible allowed option
+    const current = sourceSelect.querySelector(`option[value="${sourceSelect.value}"]`);
+    if (!current || current.hidden || current.style.display === 'none') {
+      const firstVisible = Array.from(sourceSelect.options).find(opt => !opt.hidden && opt.style.display !== 'none' && opt.value !== '');
+      if (firstVisible) sourceSelect.value = firstVisible.value;
+    }
+  }
+
+  // 🔒 Limit source options for Construction: show only first 6 + 'roof-tank'
+  function limitSourcesForConstruction() {
+    if (!sourceSelect) return;
+    // Reset visibility first
+    Array.from(sourceSelect.options).forEach(option => {
+      option.hidden = false;
+      option.style.display = '';
+    });
+
+    const options = Array.from(sourceSelect.options);
+    if (options.length === 0) return;
+
+    // Determine allowed set: first 6 non-empty + 'roof-tank'
+    const nonEmptyOptions = options.filter(o => o.value !== '');
+    const firstSix = nonEmptyOptions.slice(0, 6);
+    const allowedValues = new Set(firstSix.map(o => o.value.toLowerCase()));
+    allowedValues.add('roof-tank');
+
+    Array.from(sourceSelect.options).forEach(option => {
+      if (option.value === '') return; // keep placeholder visible
+      const isAllowed = allowedValues.has(option.value.toLowerCase());
+      option.hidden = !isAllowed;
+      option.style.display = isAllowed ? '' : 'none';
+    });
+
+    // Auto-select first visible allowed option
+    const current = sourceSelect.querySelector(`option[value="${sourceSelect.value}"]`);
+    if (!current || current.hidden || current.style.display === 'none') {
+      const firstVisible = Array.from(sourceSelect.options).find(opt => !opt.hidden && opt.style.display !== 'none' && opt.value !== '');
+      if (firstVisible) sourceSelect.value = firstVisible.value;
+    }
+  }
+
+  // 🚫 Always hide "For hospital sewage" option from source list
+  function hideHospitalSourceOption() {
+    if (!sourceSelect) return;
+    const hospitalOpt = sourceSelect.querySelector('option[value="hospital"]');
+    if (hospitalOpt) {
+      hospitalOpt.hidden = true;
+      hospitalOpt.style.display = 'none';
+    }
+  }
+
   // 📦 Custom Height Toggle Based on Delivery (only for non-pressure)
   function toggleCustomHeight() {
     if (!deliverySelect || !heightDropdownBox) return;
@@ -151,7 +240,7 @@ function togglePumpStages() {
   // 🚦 Purpose → Location & Source Filtering (hides last 5 sewage for agriculture)
   function filterLocationByPurpose() {
     if (!purposeSelect || !locationSelect) return;
-    const selected = purposeSelect.value.toLowerCase();
+    const selected = getCurrentPurposeValue();
     const locationLabel = locationSelect.previousElementSibling;
 
     const hideLocation = selected === 'construction';
@@ -190,29 +279,76 @@ function togglePumpStages() {
       if (firstVisible) locationSelect.value = firstVisible.value;
     }
 
-    // Filter source options (hide last 5 sewage for agriculture)
+    // Filter source options for purpose and toggle construction-specific source UI
     if (sourceSelect) {
-  const hideForAgriculture = ['hospital', 'hotel', 'industry', 'home', 'mall', 'municipal', 'roof-tank'];
-  Array.from(sourceSelect.options).forEach(option => {
-    const value = option.value.toLowerCase();
-    option.hidden = false;
-    option.style.display = '';
-    if (selected === 'agriculture' && hideForAgriculture.includes(value)) {
-      option.hidden = true;
-      option.style.display = 'none';
-    }
-  });
+      if (selected === 'agriculture') {
+        // Use default source select; hide construction one
+        if (constructionSourceLabel) constructionSourceLabel.style.display = 'none';
+        if (constructionSourceSelect) {
+          constructionSourceSelect.style.display = 'none';
+          constructionSourceSelect.name = 'constructionSource';
+        }
+        if (sourceSelect.previousElementSibling) sourceSelect.previousElementSibling.style.display = 'block';
+        sourceSelect.style.display = 'block';
+        if (sourceSelect.name !== 'source') sourceSelect.name = 'source';
+        limitSourcesForAgriculture();
+      } else if (selected === 'construction') {
+        // Hide default source and show construction-specific select with first 6 + roof-tank
+        if (sourceSelect.previousElementSibling) sourceSelect.previousElementSibling.style.display = 'none';
+        sourceSelect.style.display = 'none';
+        if (constructionSourceLabel) constructionSourceLabel.style.display = 'block';
+        if (constructionSourceSelect) {
+          constructionSourceSelect.style.display = 'block';
+          // build options
+          const options = Array.from(sourceSelect.options).filter(o => o.value !== '');
+          const firstSix = options.slice(0, 6);
+          const roof = options.find(o => o.value.toLowerCase() === 'roof-tank');
+          const allowed = [...firstSix];
+          if (roof && !firstSix.includes(roof)) allowed.push(roof);
+          constructionSourceSelect.innerHTML = '';
+          allowed.forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt.value;
+            o.textContent = opt.textContent;
+            constructionSourceSelect.appendChild(o);
+          });
+          constructionSourceSelect.name = 'source';
+          if (sourceSelect.name === 'source') sourceSelect.name = 'sourceHidden';
+          // select first option by default
+          if (constructionSourceSelect.options.length > 0) {
+            constructionSourceSelect.selectedIndex = 0;
+          }
+        }
+      } else {
+        // Reset to default source select; hide construction one
+        if (constructionSourceLabel) constructionSourceLabel.style.display = 'none';
+        if (constructionSourceSelect) {
+          constructionSourceSelect.style.display = 'none';
+          constructionSourceSelect.name = 'constructionSource';
+        }
+        if (sourceSelect.previousElementSibling) sourceSelect.previousElementSibling.style.display = 'block';
+        sourceSelect.style.display = 'block';
+        if (sourceSelect.name !== 'source') sourceSelect.name = 'source';
 
+        // Reset visibility for non-agriculture purposes
+        Array.from(sourceSelect.options).forEach(option => {
+          option.hidden = false;
+          option.style.display = '';
+        });
+      }
 
-      // Auto-select first visible source if current is hidden
+      // Ensure hospital option stays hidden globally (on default select only)
+      hideHospitalSourceOption();
+
+      // Auto-select first visible source if current is hidden (for default select)
       const currentSource = sourceSelect.querySelector(`option[value="${sourceSelect.value}"]`);
       if (!currentSource || currentSource.hidden || currentSource.style.display === 'none') {
         const firstVisible = Array.from(sourceSelect.options).find(opt => !opt.hidden && opt.style.display !== 'none' && opt.value !== '');
         if (firstVisible) sourceSelect.value = firstVisible.value;
       }
 
-      console.log('Purpose changed - Source filtered for agriculture:', selected === 'agriculture');
-      if (hiddenOptions.length > 0) console.log('Hidden source options:', hiddenOptions); // Debug
+      // Update water level based on active source
+      toggleWaterLevel();
     }
 
     // Cascade to location change
@@ -225,7 +361,7 @@ function togglePumpStages() {
     const selected = locationSelect.value.toLowerCase();
     const sewageSources = ['hospital', 'hotel', 'industry', 'home', 'mall'];
 
-    // Filter source options (reset and re-apply, respecting purpose)
+    // Filter source options (reset and re-apply, respecting purpose and location)
     Array.from(sourceSelect.options).forEach(option => {
       const value = option.value.toLowerCase();
       option.hidden = false;
@@ -252,17 +388,31 @@ function togglePumpStages() {
           option.style.display = 'none';
         }
       } else {
-        // For other locations, keep purpose filter (e.g., agriculture hides sewage)
+        // For other locations, reset initially; we'll apply purpose-specific limits below
         option.style.display = '';
       }
     });
 
     // Auto-select roof-tank for pressure
     if (selected === 'pressure') {
-      sourceSelect.value = 'roof-tank';
+      const activeSource = getActiveSourceSelect();
+      if (activeSource) activeSource.value = 'roof-tank';
     }
 
-    // Auto-select first visible source if current hidden
+    // Re-apply Agriculture/Construction-specific source limit if applicable and not in restricted locations
+    const currentPurpose = getCurrentPurposeValue();
+    if (!['sewage', 'roof', 'pressure'].includes(selected)) {
+      if (currentPurpose === 'agriculture') {
+        limitSourcesForAgriculture();
+      } else if (currentPurpose === 'construction') {
+        limitSourcesForConstruction();
+      }
+    }
+
+    // Ensure hospital option stays hidden globally
+    hideHospitalSourceOption();
+
+    // Auto-select first visible source if current hidden (for default select only)
     const currentSource = sourceSelect.querySelector(`option[value="${sourceSelect.value}"]`);
     if (!currentSource || currentSource.hidden || currentSource.style.display === 'none') {
       const firstVisible = Array.from(sourceSelect.options).find(opt => !opt.hidden && opt.style.display !== 'none' && opt.value !== '');
@@ -544,18 +694,18 @@ function togglePumpStages() {
     const resetBtn = form.querySelector('button[type="reset"]');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
+        // Allow form.reset() to run first, then blank out all selects/fields
         setTimeout(() => {
-          // Clear recommendations immediately
+          // Clear recommendations
           if (resultBox) {
             resultBox.innerHTML = '';
             resultBox.style.display = 'none';
           }
-          
+
           // Restore delivery to original (non-faucet)
           if (deliveryLabel) deliveryLabel.textContent = 'Where do you want the water to reach (पानी कहाँ तक पहुंचाना है)';
           if (deliverySelect) {
             deliverySelect.innerHTML = `
-              <option value="">Select delivery point</option>
               <option value="ground">Ground level (जमीन स्तर)</option>
               <option value="floor1">1st floor (~10 ft) (पहली मंजिल)</option>
               <option value="floor2">2nd floor (~20 ft) (दूसरी मंजिल)</option>
@@ -563,28 +713,28 @@ function togglePumpStages() {
               <option value="floor4">4th floor (~40 ft) (चौथी मंजिल)</option>
               <option value="custom">Above 4th floor (चौथी मंजिल से ऊपर)</option>
             `;
-            deliverySelect.value = '';
-            deliverySelect.name = 'delivery'; // Restore name
+            deliverySelect.name = 'delivery';
           }
-          // Show usage
+
+          // Show usage and water level sections
           if (usageSelect) usageSelect.style.display = 'block';
           if (usageLabel) usageLabel.style.display = 'block';
-          // Show water level
           if (waterLevelSelect) waterLevelSelect.style.display = 'block';
           if (waterLevelLabel) waterLevelLabel.style.display = 'block';
-          waterLevelSelect.value = '';
-          // Hide height dropdown
           if (heightDropdownBox) heightDropdownBox.style.display = 'none';
-          // Reset selects to defaults and re-filter
-          if (purposeSelect) purposeSelect.value = '';
-          if (locationSelect) locationSelect.value = '';
-          if (sourceSelect) sourceSelect.value = '';
-          filterLocationByPurpose();
-          filterByLocation();
-          toggleWaterLevel();
-          toggleCustomHeight();
-          console.log('Form reset - All fields and recommendations cleared'); // Debug
-        }, 10); // Small delay for form.reset() to complete
+
+          // Blank out all selects in the form (no selection)
+          const allSelects = form.querySelectorAll('select');
+          allSelects.forEach(sel => {
+            try {
+              sel.selectedIndex = -1; // no selection
+            } catch (_) {
+              sel.value = '';
+            }
+          });
+
+          console.log('Form reset - all selections cleared without reload');
+        }, 10);
       });
     }
   }
