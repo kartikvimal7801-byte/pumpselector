@@ -22,8 +22,11 @@ body {
 
 /* 🖼️ Logo */
 .logo {
-  width: 100px;
-  margin-bottom: 20px;
+  width: 150px;
+  height: auto;
+  margin: 0 auto 20px auto;
+  display: block;
+  transition: all 0.3s ease;
 }
 
 /* 🧑‍💻 Headings */
