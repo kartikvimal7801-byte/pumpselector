@@ -14,15 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const diagnosticMap = {
     "Pump does not deliver water (पंप पानी नहीं देता)": [1,3,6,16,22,47,48,9,10,49],
-    "Low discharge (पंप का डिस्चार्ज कम है)": [6,16,22,47,48,9,49],
-    "Insufficient pressure delivered (पानी का प्रेशर कम है)": [29,49,50],
+    "Low discharge (पंप का डिस्चार्ज कम है)": [6,16,22,47,48,9,49,55],
+    "Insufficient pressure delivered (पानी का प्रेशर कम है)": [29,49,50,55],
     "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)": [2,3,5,10,9,48,1],
     "Pump drawing more current (पंप ज़्यादा करंट खींच रहा है)": [50,22,47],
-    "Leaks excessively (अत्यधिक लीकेज )": [12,23,25,31,32,33,34,35,37,38,39,48],
-    "Seal has short life (सील की आयु कम)": [11,12,23,25,27,31,32,33,34,35,36,37,38,39,48],
-    "Pump vibrates or is noisy (पंप कंपन या शोर करता है)": [2,3,4,9,10,20,22,23,24,25,26,27,29,34,35,40,41,42,43,44,45,46],
-    "Bearings have short life (बेयरिंग की आयु कम)": [23,25,26,27,34,35,40,41,42,43,44,45,46],
-    "Pump overheats (पंप अधिक गर्म हो जाता है)": [22,16]
+    "Pump is tripping (पंप ट्रिप कर रहा है)": [50,51,17,47,56,57],
+    "Motor winding burn (मोटर की वाइंडिंग जल गई है)": [58,59,60,61,62,63,64,65],
+    "Pump creates noise (पंप शोर करता है)": [51,52,53,54,55,56],
+    "Pump overheats (पंप अधिक गर्म हो जाता है)": [22,16,51,52,53,56]
   };
 
   const causeDescriptions = {
@@ -31,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     7: "Air leaks in suction line (सक्शन लाइन में हवा का लीकेज )", 8: "Air leaks through stuffing box (स्टफिंग बॉक्स के माध्यम से हवा का लीकेज )", 9: "Pump NRV blocked (पंप की एनआरवी ब्लॉक है)",
     10: "Suction pipe not submerged in water (सक्शन पाइप पानी में डूबा नहीं है)", 11: "Water seal pipe plugged (वॉटर सील पाइप बंद)", 12: "Seal cage misaligned (सील केज गलत संरेखित)",
     13: "Pump speed too low (पंप की गति बहुत कम है)", 14: "Pump speed too high (पंप की गति बहुत अधिक है)", 15: "Wrong rotation direction (गलत घूर्णन दिशा)",
-    16: "System head too high (पानी फेंकने की ऊँचाई नेम प्लेट की ऊँचाई से अधिक है)", 17: "System head too low (सिस्टम हेड बहुत कम है)", 18: "Liquid density mismatch (तरल घनत्व का मेल नहीं)",
+    16: "Water delivery too high (पानी फेंकने की ऊँचाई नेम प्लेट की हेड रेंज से अधिक है)", 17: "Water delivery too high (पानी फेंकने की ऊँचाई नेम प्लेट की हेड रेंज से ज़्यादा है)", 18: "Liquid density mismatch (तरल घनत्व का मेल नहीं)",
     19: "Liquid viscosity mismatch (तरल चिपचिपाहट का मेल नहीं)", 20: "Very low capacity operation (बहुत कम क्षमता संचालन)", 21: "Unsuitable parallel pump operation (अनुपयुक्त समानांतर पंप संचालन)",
-    22: "Pump jam due to dirt or fan not rotating (धूल या फ़ैन घूम रहा नहीं है के कारण पंप जाम है)", 23: "Pump misalignment (पंप गलत संरेखण)", 24: "Weak foundation (कमजोर नींव)",
+    22: "Pump jam due to dirt or fan not rotating (केसिंग में मिट्टी होने की वजह से या फैन के न घूमने के कारण पंप जाम है)", 23: "Pump misalignment (पंप गलत संरेखण)", 24: "Weak foundation (कमजोर नींव)",
     25: "Bent shaft (मुड़ी हुई शाफ्ट)", 26: "Rubbing parts (रगड़ने वाले भाग)", 27: "Worn bearings (घिसे हुए बेयरिंग)", 28: "Worn wearing rings (घिसे हुए वियरिंग रिंग्स)",
     29: "Damaged impeller (खराब इम्पेलर)", 30: "Leaky casing gasket (लीकी केसिंग गैस्केट)", 31: "Worn shaft sleeves (घिसे हुए शाफ्ट स्लीव्स)",
     32: "Improper packing (अनुचित पैकिंग)", 33: "Wrong packing type (गलत पैकिंग प्रकार)", 34: "Off-center shaft (केंद्र से हटी हुई शाफ्ट)",
@@ -42,7 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
     41: "Overgreased or overheated bearings (अत्यधिक ग्रीस या गर्म बेयरिंग)", 42: "Lack of lubrication (स्नेहन की कमी)",
     43: "Improper bearing installation (अनुचित बेयरिंग स्थापना)", 44: "Dirty bearings (गंदे बेयरिंग)", 45: "Rusty bearings (जंग लगे बेयरिंग)",
       46: "Condensation in bearing housing (बेयरिंग हाउसिंग में संघनन)", 47: "Pump RPM too low due to weak capacitor or low voltage (लो वोल्टेज या वीक कैपेसिटर के कारण पंप का आरपीएम कम है)",
-      48: "Leakage from Mechanical seal (मैकेनिकल सील से लीकेज है)", 49: "Delivery pipe size more than 1 inch (डिलीवरी पाइप का साइज़ 1 इंच से अधिक है)", 50: 'Dirty water (गंदा पानी)'
+      48: "Leakage from Mechanical seal (मैकेनिकल सील से लीकेज है)", 49: "Delivery pipe size more than 1 inch (डिलीवरी पाइप का साइज़ 1 इंच से अधिक है)", 50: ' Pump running with dirty water (पंप गंदे पानी के साथ चल रहा है)', 51: 'Dry running of pump (पंप ड्राई चल रहा है)',
+      52: "Damaged bearings (खराब बेयरिंग)", 53: "Pump installed in closed pit or near to wall (पंप बंद गड्ढे में या दीवार के पास लगा है)", 54: "Loose wire connection (ढीला वायर कनेक्शन)", 55: "delivery pipe size less than 1/2 inch (डिलीवरी पाइप का साइज़ आधा इंच से कम है)", 56: "Pump running with hot water (गर्म पानी के साथ पंप चल रहा है)",
+       57: "Low or high voltage (180V से कम या 260V से ज़्यादा पर पंप चल रहा है)",
+       58: "Motor heat due to pump jam (पंप जाम होने से मोटर गर्म)", 59: "Motor heat due to high voltage (हाई वोल्टेज से मोटर गर्म)", 60: "Motor heat due to dry running (ड्राई रनिंग से मोटर गर्म)", 61: "Motor heat due to hot water (गर्म पानी से मोटर गर्म)", 62: "Motor heat due to dirty water (गंदे पानी से मोटर गर्म)", 63: "Water ingress in motor body from mechanical seal (मैकेनिकल सील से मोटर में पानी घुसा)", 64: "Water ingress in motor body from terminal box (टर्मिनल बॉक्स से मोटर में पानी घुसा)", 65: "Water ingress in motor body due to pump submerged in water (पंप पानी में डूबा होने से मोटर में पानी घुसा)"
   };
 
   const causeSolutions = {
@@ -61,13 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
     13: "Increase pump speed (पंप की गति बढ़ाएं)",
     14: "Reduce pump speed (पंप की गति कम करें)",
     15: "Correct rotation direction (घूर्णन दिशा सही करें)",
-    16: "Reduce system head or use higher capacity pump (सिस्टम हेड कम करें या अधिक क्षमता वाला पंप उपयोग करें)",
-    17: "Increase system head (सिस्टम हेड बढ़ाएं)",
+    16: "Reduce system head or use higher capacity pump (पानी फेंकने की ऊँचाई कम करें या अधिक क्षमता वाला पंप उपयोग करें)",
+    17: "Operate the pump within the head range specified on the nameplate (पंप को नेम प्लेट की हेड रेंज के अंदर ही चलाएँ)",
     18: "Use correct liquid density (सही तरल घनत्व उपयोग करें)",
     19: "Use correct liquid viscosity (सही तरल चिपचिपाहट उपयोग करें)",
     20: "Increase pump capacity (पंप की क्षमता बढ़ाएं)",
     21: "Adjust parallel pump operation (समानांतर पंप संचालन समायोजित करें)",
-    22: "Remove obstruction from pump or free the pump (पंप इम्पेलर को साफ करें/पंप को फ्री करें)",
+    22: "Remove obstruction from pump or free the pump (केसिंग खोलकर मिट्टी साफ करें और पंप को फ्री करें)",
     23: "Realign pump components (पंप के घटकों को सही संरेखित करें)",
     24: "Strengthen foundation (नींव मजबूत करें)",
     25: "Replace bent shaft (मुड़ी हुई शाफ्ट बदलें)",
@@ -95,7 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
       47: "Increase pump's RPM by changning the capacitor or increase the voltage(कैपेसिटर चेंज करके या वोल्टेज बढ़ाकर पंप का आरपीएम बढ़ाएँ)",
       48: "Replace mechanical seal (मैकेनिकल सील बदलें)",
       49: "Use 1 inch or smaller delivery pipe (1 इंच या छोटा डिलीवरी पाइप उपयोग करें)",
-      50: "Run the pump in clean water (साफ पानी में पंप चलाएं)"
+      50: "Run the pump in clean water (साफ पानी में पंप चलाएं)",
+      51: "Run the pump with water (पंप पानी के साथ ही चलाएँ)",
+      52: "Replace damaged bearings (खराब बेयरिंग बदलें)",
+      53: "Install pump in open area with proper ventilation (पंप को खुले क्षेत्र में उचित वेंटिलेशन के साथ स्थापित करें)",
+      54: "Tighten all electrical connections (सभी बिजली के कनेक्शन कसें)",
+      55: "Use larger delivery pipe size (बड़ा डिलीवरी पाइप साइज़ उपयोग करें)",
+      56: "Use cold water or allow water to cool down (ठंडा पानी उपयोग करें या पानी को ठंडा होने दें)",
+       57: "Operate the pump only within 180V to 260V range (180 वोल्टेज या 260 वोल्टेज के अंदर ही पंप चलाएँ)",
+       58: "Remove pump jam and clean pump casing (पंप जाम हटाएं और केसिंग साफ करें)", 59: "Use voltage stabilizer or correct voltage supply (वोल्टेज स्टेबिलाइजर या सही वोल्टेज उपयोग करें)", 60: "Always run pump with water (हमेशा पंप पानी के साथ चलाएं)", 61: "Use cold water or allow water to cool down (ठंडा पानी उपयोग करें या पानी को ठंडा होने दें)", 62: "Use clean water for pump operation (पंप के लिए साफ पानी उपयोग करें)", 63: "Replace mechanical seal and check motor (मैकेनिकल सील बदलें और मोटर जांचें)", 64: "Seal terminal box properly (टर्मिनल बॉक्स को ठीक से सील करें या बदलें)", 65: "Install pump above water level or use submersible pump (पंप को पानी के स्तर से ऊपर लगाएं या सबमर्सिबल पंप उपयोग करें)"
   };
 
   // Cause animations mapping - removed all symbols
@@ -104,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
     11: "", 12: "", 13: "", 14: "", 15: "", 16: "", 17: "", 18: "", 19: "", 20: "",
     21: "", 22: "", 23: "", 24: "", 25: "", 26: "", 27: "", 28: "", 29: "", 30: "",
     31: "", 32: "", 33: "", 34: "", 35: "", 36: "", 37: "", 38: "", 39: "", 40: "",
-    41: "", 42: "", 43: "", 44: "", 45: "", 46: "", 47: "", 48: "", 49: "", 50: ""
+    41: "", 42: "", 43: "", 44: "", 45: "", 46: "", 47: "", 48: "", 49: "", 50: "", 51:"",
+     52: "", 53: "", 54: "", 55: "", 56: "", 57: "", 58: "", 59: "", 60: "", 61: "", 62: "", 63: "", 64: "", 65: "",
   };
 
   const videoLinks = {
