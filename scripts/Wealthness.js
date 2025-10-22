@@ -2,8 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('wealthForm');
   const checkBtn = document.getElementById('checkBtn');
   const videoBtn = document.getElementById('videoBtn');
+  const installBtn = document.getElementById('installBtn');
   const problemSection = document.getElementById('problemSection');
   const videoSection = document.getElementById('videoSection');
+  const installSection = document.getElementById('installSection');
   const problemSelect = document.getElementById('problemSelect');
   const pumpTypeSelect = document.getElementById('pumpTypeSelect');
   const solutionBox = document.getElementById('solutionBox');
@@ -11,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const videoBox = document.getElementById('videoBox');
   const pumpTypeGrid = document.getElementById('pumpTypeGrid');
   const pumpTypeHidden = document.getElementById('pumpTypeDiagnosticSelect');
+  const installImageBox = document.getElementById('installImageBox');
 
   const diagnosticMap = {
     "Pump does not deliver water (पंप पानी नहीं देता)": [1,3,6,16,22,47,48,9,10,49],
@@ -152,8 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
   checkBtn.addEventListener('click', () => {
     checkBtn.classList.add('active');
     videoBtn.classList.remove('active');
+    installBtn.classList.remove('active');
     problemSection.style.display = 'block';
     videoSection.style.display = 'none';
+    installSection.style.display = 'none';
     videoBox.innerHTML = "";
     pumpTypeSelect.value = "";
   });
@@ -161,10 +166,55 @@ document.addEventListener('DOMContentLoaded', () => {
   videoBtn.addEventListener('click', () => {
     videoBtn.classList.add('active');
     checkBtn.classList.remove('active');
+    installBtn.classList.remove('active');
     problemSection.style.display = 'none';
     videoSection.style.display = 'block';
+    installSection.style.display = 'none';
     solutionBox.innerHTML = "";
     problemSelect.value = "";
+  });
+
+  // Toggle to Installation guide
+  installBtn.addEventListener('click', () => {
+    installBtn.classList.add('active');
+    checkBtn.classList.remove('active');
+    videoBtn.classList.remove('active');
+    problemSection.style.display = 'none';
+    videoSection.style.display = 'none';
+    installSection.style.display = 'block';
+    solutionBox.innerHTML = "";
+    resultBox.innerHTML = "";
+    videoBox.innerHTML = "";
+    if (installImageBox) installImageBox.innerHTML = "";
+    problemSelect.value = "";
+    pumpTypeSelect.value = "";
+  });
+
+  // Installation headings click handlers
+  document.querySelectorAll('.install-heading').forEach(h => {
+    h.addEventListener('click', () => {
+      const img = h.getAttribute('data-image');
+      const size = h.getAttribute('data-size');
+      if (!installImageBox) return;
+      if (img) {
+        const maxWidth = size === 'small' ? '90%' : '95%';
+        const maxHeight = size === 'small' ? '90vh' : '60vh';
+        installImageBox.innerHTML = `
+          <div style="display:flex; justify-content:center; align-items:center;">
+            <img src="${img}" alt="Installation" style="max-width:${maxWidth}; max-height:${maxHeight}; object-fit:contain; display:block; margin:0 auto; border:1px solid #ddd; border-radius:8px;" />
+          </div>
+        `;
+      } else {
+        installImageBox.innerHTML = `<div style="padding:20px; background:#f8f9fa; border:1px dashed #bbb; border-radius:8px; color:#666;">Image coming soon</div>`;
+      }
+      // Visual feedback: mimic cause-item selection style
+      document.querySelectorAll('.install-heading').forEach(x => {
+        x.classList.remove('selected');
+        x.style.backgroundColor = '#f8f9f9';
+      });
+      h.classList.add('selected');
+      h.style.backgroundColor = '#e3f2fd';
+    });
   });
 
   // Show causes when problem is selected
