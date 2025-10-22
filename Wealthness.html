@@ -109,10 +109,11 @@
 
   <div class="selection-container">
     <img src="assets/haveels2.png" alt="Havells Logo" class="logo">
-    <h1>Pump Service Support Required</h1>
+    <h1>Pump Service Support Guide </h1>
 
     <div class="action-buttons">
-      <button type="button" id="checkBtn" class="toggle-button active">🔍 Check Problem</button>
+      <button type="button" id="installBtn" class="toggle-button">🧰 Pump Installation Guide</button>
+      <button type="button" id="checkBtn" class="toggle-button active">🔍 Check Pump Problem</button>
       <button type="button" id="videoBtn" class="toggle-button">🎥 Troubleshoot Videos</button>
     </div>
 
@@ -141,19 +142,11 @@
             <img src="assets/openwell-pump.jpg" alt="Open Well Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="3borwp">
-            <div class="pump-name">3inch Borewell Pump</div>
+            <div class="pump-name">3-4 inch Borewell Pump</div>
             <img src="assets/Borewell-pump.jpg" alt="3inch Borewell Pump" class="pump-image">
           </div>
-          <div class="pump-type-item" data-value="4borwp">
-            <div class="pump-name">4inch Borewell Pump</div>
-            <img src="assets/Borewell-pump.jpg" alt="4inch Borewell Pump" class="pump-image">
-          </div>
-          <div class="pump-type-item" data-value="5borwp">
-            <div class="pump-name">5inch Borewell Pump</div>
-            <img src="assets/Agriculture-borewell-pump.jpg" alt="5inch Borewell Pump" class="pump-image">
-          </div>
           <div class="pump-type-item" data-value="6borwp">
-            <div class="pump-name">6inch Borewell Pump</div>
+            <div class="pump-name">5-6-7-8 inch Borewell Pump</div>
             <img src="assets/Agriculture-borewell-pump.jpg" alt="6inch Borewell Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="shallow">
@@ -171,6 +164,10 @@
           <div class="pump-type-item" data-value="circulatingpump">
             <div class="pump-name">In Line Circulating Pump</div>
             <img src="assets/inline-circulating-pump.jpg" alt="In Line Circulating Pump" class="pump-image">
+          </div>
+          <div class="pump-type-item" data-value="dewatering">
+            <div class="pump-name">Dewatering Pump</div>
+            <img src="assets/dewatering-pump.png" alt="Dewatering Pump" class="pump-image">
           </div>
         </div>
         <input type="hidden" name="pumpTypeDiagnostic" id="pumpTypeDiagnosticSelect">
@@ -201,6 +198,13 @@
           <option value="type5">Type 5</option>
           <option value="type6">Type 6</option>
         </select>
+      </div>
+
+      <div id="installSection" style="display:none; margin-top: 10px; text-align:left;">
+        <div class="cause-item install-heading" data-image="assets/Pump-Image-1.png" style="cursor:pointer;">1. Surface pump installation</div>
+        <div class="cause-item install-heading" data-image="assets/borewell-subersible-pump.png" data-size="small" style="cursor:pointer;">2. Subermgersible pump Installation</div>
+        <div class="cause-item install-heading" data-image="assets/pressure-pump-installation.png" style="cursor:pointer;">3. Pressure pump installation</div>
+        <div id="installImageBox" style="margin-top:16px; text-align:center;"></div>
       </div>
 
       <button type="submit">Submit</button>
