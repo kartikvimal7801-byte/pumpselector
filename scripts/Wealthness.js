@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const diagnosticMap = {
     "Pump does not deliver water (पंप पानी नहीं देता)": [1,3,6,16,22,47,48,9,10,49],
-    "Low discharge (पंप का डिस्चार्ज कम है)": [6,16,22,47,48,9,49,55],
-    "Insufficient pressure delivered (पानी का प्रेशर कम है)": [29,49,50,55],
-    "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)": [2,3,5,10,9,48,1],
+    "Low discharge (पंप का डिस्चार्ज कम है)": [6,16,22,47,48,9,49],
+    "Insufficient pressure delivered (पानी का प्रेशर कम है)": [29,67,50,55],
+    "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)": [2,3,5,10,9,48,47,1],
     "Pump drawing more current (पंप ज़्यादा करंट खींच रहा है)": [50,22,47],
     "Pump is tripping (पंप ट्रिप कर रहा है)": [50,51,17,47,56,57],
     "Motor winding burn (मोटर की वाइंडिंग जल गई है)": [58,59,60,61,62,63,64,65],
-    "Pump creates noise (पंप शोर करता है)": [51,52,53,54,55,56],
-    "Pump overheats (पंप अधिक गर्म हो जाता है)": [22,16,51,52,53,56]
+    "Pump creates noise (पंप शोर करता है)": [51,52,53,54,55,56,57,68,69],
+    "Pump overheats (पंप अधिक गर्म हो जाता है)": [22,16,51,52,53,56,55,68]
   };
 
   const causeDescriptions = {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     7: "Air leaks in suction line (सक्शन लाइन में हवा का लीकेज )", 8: "Air leaks through stuffing box (स्टफिंग बॉक्स के माध्यम से हवा का लीकेज )", 9: "Pump NRV blocked (पंप की एनआरवी ब्लॉक है)",
     10: "Suction pipe not submerged in water (सक्शन पाइप पानी में डूबा नहीं है)", 11: "Water seal pipe plugged (वॉटर सील पाइप बंद)", 12: "Seal cage misaligned (सील केज गलत संरेखित)",
     13: "Pump speed too low (पंप की गति बहुत कम है)", 14: "Pump speed too high (पंप की गति बहुत अधिक है)", 15: "Wrong rotation direction (गलत घूर्णन दिशा)",
-    16: "Water delivery too high (पानी फेंकने की ऊँचाई नेम प्लेट की हेड रेंज से अधिक है)", 17: "Water delivery too high (पानी फेंकने की ऊँचाई नेम प्लेट की हेड रेंज से ज़्यादा है)", 18: "Liquid density mismatch (तरल घनत्व का मेल नहीं)",
+    16: "Water delivery too high (वॉटर लेवल से पानी फेंकने की ऊँचाई नेमप्लेट में दी गई हेड रेंज से ज़्यादा है)", 17: "Water delivery too high (पानी फेंकने की ऊँचाई नेम प्लेट की हेड रेंज से ज़्यादा है)", 18: "Liquid density mismatch (तरल घनत्व का मेल नहीं)",
     19: "Liquid viscosity mismatch (तरल चिपचिपाहट का मेल नहीं)", 20: "Very low capacity operation (बहुत कम क्षमता संचालन)", 21: "Unsuitable parallel pump operation (अनुपयुक्त समानांतर पंप संचालन)",
     22: "Pump jam due to dirt or fan not rotating (केसिंग में मिट्टी होने की वजह से या फैन के न घूमने के कारण पंप जाम है)", 23: "Pump misalignment (पंप गलत संरेखण)", 24: "Weak foundation (कमजोर नींव)",
     25: "Bent shaft (मुड़ी हुई शाफ्ट)", 26: "Rubbing parts (रगड़ने वाले भाग)", 27: "Worn bearings (घिसे हुए बेयरिंग)", 28: "Worn wearing rings (घिसे हुए वियरिंग रिंग्स)",
@@ -47,7 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
       48: "Leakage from Mechanical seal (मैकेनिकल सील से लीकेज है)", 49: "Delivery pipe size more than 1 inch (डिलीवरी पाइप का साइज़ 1 इंच से अधिक है)", 50: ' Pump running with dirty water (पंप गंदे पानी के साथ चल रहा है)', 51: 'Dry running of pump (पंप ड्राई चल रहा है)',
       52: "Damaged bearings (खराब बेयरिंग)", 53: "Pump installed in closed pit or near to wall (पंप बंद गड्ढे में या दीवार के पास लगा है)", 54: "Loose wire connection (ढीला वायर कनेक्शन)", 55: "delivery pipe size less than 1/2 inch (डिलीवरी पाइप का साइज़ आधा इंच से कम है)", 56: "Pump running with hot water (गर्म पानी के साथ पंप चल रहा है)",
        57: "Low or high voltage (180V से कम या 260V से ज़्यादा पर पंप चल रहा है)",
-       58: "Motor heat due to pump jam (पंप जाम होने से मोटर गर्म)", 59: "Motor heat due to high voltage (हाई वोल्टेज से मोटर गर्म)", 60: "Motor heat due to dry running (ड्राई रनिंग से मोटर गर्म)", 61: "Motor heat due to hot water (गर्म पानी से मोटर गर्म)", 62: "Motor heat due to dirty water (गंदे पानी से मोटर गर्म)", 63: "Water ingress in motor body from mechanical seal (मैकेनिकल सील से मोटर में पानी घुसा)", 64: "Water ingress in motor body from terminal box (टर्मिनल बॉक्स से मोटर में पानी घुसा)", 65: "Water ingress in motor body due to pump submerged in water (पंप पानी में डूबा होने से मोटर में पानी घुसा)"
+       58: "Motor heat due to pump jam (पंप जाम होने से मोटर गर्म)", 59: "Motor heat due to high voltage (हाई वोल्टेज से मोटर गर्म)", 60: "Motor heat due to dry running (ड्राई रनिंग से मोटर गर्म)", 61: "Motor heat due to hot water (गर्म पानी से मोटर गर्म)", 62: "Motor heat due to dirty water (गंदे पानी से मोटर गर्म)", 63: "Water ingress in motor body from mechanical seal (मैकेनिकल सील से मोटर में पानी घुसा)", 64: "Water ingress in motor body from terminal box (टर्मिनल बॉक्स से मोटर में पानी घुसा)",       65: "Water ingress in motor body due to pump submerged in water (पंप पानी में डूबा होने से मोटर में पानी घुसा)",
+      66: "Foot valve was not used in suction line (सक्शन लाइन में फुट वाल्व नहीं लगाया गया)",
+      67: "Delivery pipe size is more than the pipe size given in name plate (डिलीवरी पाइप का साइज़ नेम प्लेट में दिए गए पाइप साइज़ से अधिक है)",
+      68: "Delivery pipe size is less than the pipe size given in name plate (डिलीवरी पाइप का साइज़ नेम प्लेट में दिए गए पाइप साइज़ से कम है)",
+      69: "low voltage or high voltage than name plate specifications (नेम प्लेट के अनुसार कम वोल्टेज या हाई वोल्टेज है)"
   };
 
   const causeSolutions = {
@@ -108,7 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
       55: "Use larger delivery pipe size (बड़ा डिलीवरी पाइप साइज़ उपयोग करें)",
       56: "Use cold water or allow water to cool down (ठंडा पानी उपयोग करें या पानी को ठंडा होने दें)",
        57: "Operate the pump only within 180V to 260V range (180 वोल्टेज या 260 वोल्टेज के अंदर ही पंप चलाएँ)",
-       58: "Remove pump jam and clean pump casing (पंप जाम हटाएं और केसिंग साफ करें)", 59: "Use voltage stabilizer or correct voltage supply (वोल्टेज स्टेबिलाइजर या सही वोल्टेज उपयोग करें)", 60: "Always run pump with water (हमेशा पंप पानी के साथ चलाएं)", 61: "Use cold water or allow water to cool down (ठंडा पानी उपयोग करें या पानी को ठंडा होने दें)", 62: "Use clean water for pump operation (पंप के लिए साफ पानी उपयोग करें)", 63: "Replace mechanical seal and check motor (मैकेनिकल सील बदलें और मोटर जांचें)", 64: "Seal terminal box properly (टर्मिनल बॉक्स को ठीक से सील करें या बदलें)", 65: "Install pump above water level or use submersible pump (पंप को पानी के स्तर से ऊपर लगाएं या सबमर्सिबल पंप उपयोग करें)"
+       58: "Remove pump jam and clean pump casing (पंप जाम हटाएं और केसिंग साफ करें)", 59: "Use voltage stabilizer or correct voltage supply (वोल्टेज स्टेबिलाइजर या सही वोल्टेज उपयोग करें)", 60: "Always run pump with water (हमेशा पंप पानी के साथ चलाएं)", 61: "Use cold water or allow water to cool down (ठंडा पानी उपयोग करें या पानी को ठंडा होने दें)", 62: "Use clean water for pump operation (पंप के लिए साफ पानी उपयोग करें)", 63: "Replace mechanical seal and check motor (मैकेनिकल सील बदलें और मोटर जांचें)", 64: "Seal terminal box properly (टर्मिनल बॉक्स को ठीक से सील करें या बदलें)",        65: "Install pump above water level or use submersible pump (पंप को पानी के स्तर से ऊपर लगाएं या सबमर्सिबल पंप उपयोग करें)",
+      66: "Install foot valve in suction line (सक्शन लाइन में फुट वाल्व लगाएं)",
+      67: "Use delivery pipe size as per name plate specifications (नेम प्लेट के अनुसार डिलीवरी पाइप साइज़ उपयोग करें)",
+      68: "Use delivery pipe size as per name plate specifications (नेम प्लेट के अनुसार डिलीवरी पाइप साइज़ उपयोग करें)",
+      69: "Check and correct the supplyvoltage (वोल्टेज उपयोग करें)"
   };
 
   // Cause animations mapping - removed all symbols
@@ -118,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     21: "", 22: "", 23: "", 24: "", 25: "", 26: "", 27: "", 28: "", 29: "", 30: "",
     31: "", 32: "", 33: "", 34: "", 35: "", 36: "", 37: "", 38: "", 39: "", 40: "",
     41: "", 42: "", 43: "", 44: "", 45: "", 46: "", 47: "", 48: "", 49: "", 50: "", 51:"",
-     52: "", 53: "", 54: "", 55: "", 56: "", 57: "", 58: "", 59: "", 60: "", 61: "", 62: "", 63: "", 64: "", 65: "",
+     52: "", 53: "", 54: "", 55: "", 56: "", 57: "", 58: "", 59: "", 60: "", 61: "", 62: "", 63: "", 64: "", 65: "", 66: "", 67: "", 68: "", 69: "",
   };
 
   const videoLinks = {
@@ -147,6 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update hidden input value
       if (pumpTypeHidden) {
         pumpTypeHidden.value = pumpItem.dataset.value;
+      }
+      
+      // Refresh causes if a problem is already selected
+      if (problemSelect.value) {
+        problemSelect.dispatchEvent(new Event('change'));
       }
     });
   }
@@ -220,16 +233,93 @@ document.addEventListener('DOMContentLoaded', () => {
   // Show causes when problem is selected
   problemSelect.addEventListener('change', () => {
     const selected = problemSelect.value;
-    const causes = diagnosticMap[selected];
+    let causes = diagnosticMap[selected];
     if (!causes) {
       solutionBox.innerHTML = "";
       return;
     }
 
+    // Get selected pump type
+    const selectedPumpType = pumpTypeHidden?.value || '';
+    
+    // Filter causes based on pump type
+    if (selectedPumpType === 'centrifugale') {
+      // Remove causes 9 (Pump NRV blocked) and 10 (Suction pipe not submerged)
+      causes = causes.filter(causeId => causeId !== 9 && causeId !== 10);
+      
+      // Special handling for "Low discharge" problem
+      if (selected === "Low discharge (पंप का डिस्चार्ज कम है)") {
+        // Remove cause 49 (Delivery pipe size more than 1 inch) for centrifugal pump
+        causes = causes.filter(causeId => causeId !== 49);
+        // Add new cause 67 (Delivery pipe size is more than the pipe size given in name plate)
+        causes.push(67);
+      }
+      
+      // Special handling for "Insufficient pressure delivered" problem
+      if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)") {
+        // Remove causes 50 (Pump running with dirty water) and 55 (delivery pipe size less than 1/2 inch) for centrifugal pump
+        causes = causes.filter(causeId => causeId !== 50 && causeId !== 55);
+        // Add cause 48 (Leakage from mechanical seal) for centrifugal pump
+        causes.push(48);
+      }
+      
+      // Special handling for "Pump is tripping" problem
+      if (selected === "Pump is tripping (पंप ट्रिप कर रहा है)") {
+        // Remove cause 57 (Low or high voltage) for centrifugal pump
+        causes = causes.filter(causeId => causeId !== 57);
+        // Add cause 69 (low voltage or high voltage than name plate specifications) for centrifugal pump
+        causes.push(69);
+      }
+      
+      // Add new cause 66 (Foot valve was not used in suction line) for relevant problems
+      const problemsWithFootValveIssue = [
+        "Pump does not deliver water (पंप पानी नहीं देता)",
+        "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)"
+      ];
+      
+      if (problemsWithFootValveIssue.includes(selected)) {
+        causes.push(66);
+      }
+    }
+    
+    // Filter causes for shallow well pump
+    if (selectedPumpType === 'shallow') {
+      // Remove cause 9 (Pump NRV blocked) from all causes for shallow well pump
+      causes = causes.filter(causeId => causeId !== 9);
+    }
+    
+    // Filter causes for deep well jet pump
+    if (selectedPumpType === 'deepwell') {
+      // No specific cause filtering needed, but suction lift height will be changed to 100ft
+    }
+    
+    // Filter causes for 3-4inch and 5-6-7-8inch borewell pumps
+    if (selectedPumpType === '3borwp' || selectedPumpType === '6borwp') {
+      // Replace causes 1, 3, 6, 48, 10 with cause 67 (Delivery pipe size is more than the pipe size given in name plate)
+      // Keep cause 22 but it will show impeller text instead of casing text
+      causes = causes.filter(causeId => ![1, 3, 6, 48, 10].includes(causeId));
+      causes.push(67);
+    }
+
     const list = causes.map(num => {
+      // Special handling for different causes based on pump types
+      let causeText = causeDescriptions[num];
+      
+      // Special handling for cause 3 (Suction lift too high) for different pump types
+      if (num === 3 && selectedPumpType === 'shallow') {
+        causeText = "Suction lift too high (पानी की गहराई ज़मीन से 28 फीट से ज़्यादा है)";
+      } else if (num === 3 && selectedPumpType === 'deepwell') {
+        causeText = "Suction lift too high (पानी की गहराई ज़मीन से 100 फीट से ज़्यादा है)";
+      }
+      
+      // Special handling for cause 22 (Pump jam) for 3-4inch and 5-6-7-8inch pumps
+      if (num === 22 && (selectedPumpType === '3borwp' || selectedPumpType === '6borwp')) {
+        causeText = "Pump jam due to dirt or fan not rotating (इम्पेलर में मिट्टी होने की वजह से या फैन के न घूमने के कारण पंप जाम है)";
+      }
+      
       return `
         <div class="cause-item" data-cause-id="${num}" style="cursor: pointer; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9; transition: background-color 0.3s; text-align: left;">
-          <div class="cause-text" style="text-align: left;">${causeDescriptions[num]}</div>
+          <div class="cause-text" style="text-align: left;">${causeText}</div>
         </div>
       `;
     }).join("");
@@ -258,8 +348,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to show solution popup
   function showSolutionPopup(causeId) {
-    const cause = causeDescriptions[causeId];
-    const solution = causeSolutions[causeId];
+    let cause = causeDescriptions[causeId];
+    let solution = causeSolutions[causeId];
+    
+    // Special handling for different causes based on pump types
+    if (causeId === 3) {
+      const selectedPumpType = pumpTypeHidden?.value || '';
+      if (selectedPumpType === 'shallow') {
+        cause = "Suction lift too high (पानी की गहराई ज़मीन से 28 फीट से ज़्यादा है)";
+        solution = "Reduce suction lift to under 28 feet (पानी की गहराई 28 फीट से कम करें)";
+      } else if (selectedPumpType === 'deepwell') {
+        cause = "Suction lift too high (पानी की गहराई ज़मीन से 100 फीट से ज़्यादा है)";
+        solution = "Reduce suction lift to under 100 feet (पानी की गहराई 100 फीट से कम करें)";
+      }
+    }
+    
+    // Special handling for cause 22 (Pump jam) for 3-4inch and 5-6-7-8inch pumps
+    if (causeId === 22) {
+      const selectedPumpType = pumpTypeHidden?.value || '';
+      if (selectedPumpType === '3borwp' || selectedPumpType === '6borwp') {
+        cause = "Pump jam due to dirt or fan not rotating (इम्पेलर में मिट्टी होने की वजह से या फैन के न घूमने के कारण पंप जाम है)";
+        solution = "Remove obstruction from pump or free the pump (इम्पेलर खोलकर मिट्टी साफ करें और पंप को फ्री करें)";
+      }
+    }
     
     if (!cause || !solution) return;
 
