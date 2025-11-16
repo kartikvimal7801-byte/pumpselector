@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Pump Service Support Required</title>
   <link rel="stylesheet" href="assets/styles.css">
+  <script src="scripts/database.js" defer></script>
   <script src="scripts/Wealthness.js" defer></script>
   <style>
     .back-button {
@@ -138,16 +139,16 @@
             <img src="assets/Multistage-booster.jpg" alt="Multi-stage Booster Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="opwell">
-            <div class="pump-name">Open Well Pump</div>
-            <img src="assets/openwell-pump.jpg" alt="Open Well Pump" class="pump-image">
+            <div class="pump-name">Open Well submersible Pump</div>
+            <img src="assets/openwell-pump.jpg" alt="Open Well submersible Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="3borwp">
-            <div class="pump-name">3-4 inch Borewell Pump</div>
-            <img src="assets/Borewell-pump.jpg" alt="3inch Borewell Pump" class="pump-image">
+            <div class="pump-name">3-4 inch Borewell submersible Pump</div>
+            <img src="assets/Borewell-pump.jpg" alt="3inch Borewell submersible Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="6borwp">
-            <div class="pump-name">5-6-7-8 inch Borewell Pump</div>
-            <img src="assets/Agriculture-borewell-pump.jpg" alt="6inch Borewell Pump" class="pump-image">
+            <div class="pump-name">5-6-7-8 inch Borewell submersible Pump</div>
+            <img src="assets/Agriculture-borewell-pump.jpg" alt="6inch Borewell submersible Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="shallow">
             <div class="pump-name">Shallow Well Jet Pump</div>
@@ -158,23 +159,23 @@
             <img src="assets/Deepwell-jet-pump.jpg" alt="Deep Well Jet Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="a1sewage">
-            <div class="pump-name">Sewage Pump</div>
-            <img src="assets/Sewage-pump.jpg" alt="Sewage Pump" class="pump-image">
+            <div class="pump-name">Sewage submersible Pump</div>
+            <img src="assets/Sewage-pump.jpg" alt="Sewage submersible Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="circulatingpump">
             <div class="pump-name">In Line Circulating Pump</div>
             <img src="assets/inline-circulating-pump.jpg" alt="In Line Circulating Pump" class="pump-image">
           </div>
           <div class="pump-type-item" data-value="dewatering">
-            <div class="pump-name">Dewatering Pump</div>
-            <img src="assets/dewatering-pump.png" alt="Dewatering Pump" class="pump-image">
+            <div class="pump-name">Dewatering Submersible Pump</div>
+            <img src="assets/dewatering-pump.png" alt="Dewatering Submersible Pump" class="pump-image">
           </div>
         </div>
         <input type="hidden" name="pumpTypeDiagnostic" id="pumpTypeDiagnosticSelect">
 
         <label>What is the problem? (समस्या क्या है?)</label>
         <select name="problem" id="problemSelect" required>
-          <option value="">-- Select a problem -- (समस्या चुनें --)</option>
+          <option value="">Select a problem (समस्या चुनें)</option>
           <option>Pump does not deliver water (पंप पानी नहीं देता)</option>
           <option>Low discharge (पंप का डिस्चार्ज कम है)</option>
           <option>Insufficient pressure delivered (पानी का प्रेशर कम है)</option>
@@ -190,7 +191,7 @@
       <div id="videoSection" style="display:none;">
         <label>Type of Pump</label>
         <select name="pumpType" id="pumpTypeSelect">
-          <option value="">-- Select pump type --</option>
+          <option value="">Select pump type (पंप प्रकार चुनें)</option>
           <option value="mmb">Mini Mono Block (MMB)</option>
           <option value="pp">Pressure Pump (PP)</option>
           <option value="bws">Bore Well Submersible (BWS)</option>
