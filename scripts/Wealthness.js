@@ -53,7 +53,32 @@ document.addEventListener('DOMContentLoaded', () => {
       68: "Delivery pipe size is less than the pipe size given in name plate (डिलीवरी पाइप का साइज़ नेम प्लेट में दिए गए पाइप साइज़ से कम है)",
       69: "low voltage or high voltage than name plate specifications (नेम प्लेट के अनुसार कम वोल्टेज या हाई वोल्टेज है)",
       70: "Pump jam due to sand (रेत के कारण पंप जाम है)",
-      71: "Motor not filled with water (मोटर में पानी नहीं भरा है)"
+      71: "Motor not filled with water (मोटर में पानी नहीं भरा है)",
+      72: "Wrong setting of pressure switch (प्रेशर स्विच की गलत सेटिंग)",
+      73: "Total pipe length is more (कुल पाइप लंबाई अधिक है)",
+      74: "Pipeline connection is wrong (पाइपलाइन सुधार गलत है)",
+      75: "Faucet Pressure rating is wrong (नल का प्रेशर रेटिंग गलत है)",
+      76: "Low HP rating Pump Selected (कम HP रेटिंग वाला पंप चुना गया है)",
+      77: "Line pressure is not correct, check pressure setting (लाइन प्रेशर सही नहीं है, प्रेशर सेटिंग जांचें)",
+      78: "Float switch is faulty or not installed correctly (फ्लोट स्विच खराब है या सही तरीके से स्थापित नहीं है)",
+      79: "Y Strainer installation is wrong- upside (Y स्ट्रेनर स्थापना गलत है- उल्टा)",
+      80: "Suction bend is block (सक्शन बेंड ब्लॉक है)",
+      81: "Wrong installation of suction bend -down side strainer (सक्शन बेंड की गलत स्थापना - नीचे की तरफ स्ट्रेनर)",
+      82: "Pump not placed horizontal inside water (पंप पानी के अंदर क्षैतिज रूप से नहीं रखा गया है)",
+      83: "Wrong model selection (गलत मॉडल चयन)",
+      84: "Pump is running with slurry (पंप स्लरी के साथ चल रहा है)",
+      85: "Pump not fully submerged inside water (पंप पानी के अंदर पूरी तरह से डूबा नहीं है)",
+      86: "Installation is not correct (स्थापना सही नहीं है)",
+      87: "Install the pump with delivery pipe line coming from over head tank (ओवर हेड टैंक से आने वाली डिलीवरी पाइप लाइन के साथ पंप स्थापित करें)",
+      88: "Pump should be installed in horizontal position only (पंप को केवल क्षैतिज स्थिति में स्थापित करना चाहिए)",
+      89: "Check switch selection -ON/OFF/ AUTO for correctness (स्विच चयन -ON/OFF/AUTO की शुद्धता जांचें)",
+      90: "Flow switch installation is wrong (फ्लो स्विच स्थापना गलत है)",
+      91: "Change switch selection for speed and high discharge (गति और उच्च डिस्चार्ज के लिए स्विच चयन बदलें)",
+      92: "No water in suction line (सक्शन लाइन में पानी नहीं है)",
+      93: "Pump wrong installation (पंप गलत स्थापना)",
+      94: "Impeller Jam (इम्पेलर जाम)",
+      95: "Float switch operation is not correct (फ्लोट स्विच संचालन सही नहीं है)",
+      96: "Bottom strainer is block (बॉटम स्ट्रेनर ब्लॉक है)"
   };
 
   const causeSolutions = {
@@ -120,7 +145,32 @@ document.addEventListener('DOMContentLoaded', () => {
       68: "Use delivery pipe size as per name plate specifications (नेम प्लेट के अनुसार डिलीवरी पाइप साइज़ उपयोग करें)",
       69: "Check and correct the supplyvoltage (वोल्टेज उपयोग करें)",
       70: "Remove sand and free the impeller (रेत हटाएं और इम्पेलर को फ्री करें)",
-      71: "Fill the motor with clean water as per specification (स्पेसिफिकेशन के अनुसार मोटर में साफ पानी भरें)"
+      71: "Fill the motor with clean water as per specification (स्पेसिफिकेशन के अनुसार मोटर में साफ पानी भरें)",
+      72: "Correct the pressure switch setting (प्रेशर स्विच की सेटिंग सही करें)",
+      73: "Reduce total pipe length (कुल पाइप लंबाई कम करें)",
+      74: "Correct the pipeline installation (पाइपलाइन स्थापना सही करें)",
+      75: "Use correct faucet pressure rating (सही नल प्रेशर रेटिंग उपयोग करें)",
+      76: "Select pump with higher HP rating (अधिक HP रेटिंग वाला पंप चुनें)",
+      77: "Correct the line pressure setting (लाइन प्रेशर सेटिंग सही करें)",
+      78: "Replace or correctly install the float switch (फ्लोट स्विच बदलें या सही तरीके से स्थापित करें)",
+      79: "Install Y Strainer correctly (Y स्ट्रेनर को सही तरीके से स्थापित करें)",
+      80: "Clean or unblock the suction bend (सक्शन बेंड को साफ करें या अनब्लॉक करें)",
+      81: "Install suction bend correctly with strainer on down side (सक्शन बेंड को नीचे की तरफ स्ट्रेनर के साथ सही तरीके से स्थापित करें)",
+      82: "Place pump horizontally inside water (पंप को पानी के अंदर क्षैतिज रूप से रखें)",
+      83: "Select correct pump model (सही पंप मॉडल चुनें)",
+      84: "Run pump with clean water, not slurry (पंप को स्लरी के बजाय साफ पानी के साथ चलाएं)",
+      85: "Fully submerge pump inside water (पंप को पानी के अंदर पूरी तरह से डुबोएं)",
+      86: "Correct the pump installation (पंप स्थापना सही करें)",
+      87: "Install pump with delivery pipe line coming from overhead tank (ओवर हेड टैंक से आने वाली डिलीवरी पाइप लाइन के साथ पंप स्थापित करें)",
+      88: "Install pump in horizontal position only (पंप को केवल क्षैतिज स्थिति में स्थापित करें)",
+      89: "Correct the switch selection -ON/OFF/AUTO (स्विच चयन -ON/OFF/AUTO सही करें)",
+      90: "Correct the flow switch installation (फ्लो स्विच स्थापना सही करें)",
+      91: "Change switch selection for speed and high discharge (गति और उच्च डिस्चार्ज के लिए स्विच चयन बदलें)",
+      92: "Fill water in suction line (सक्शन लाइन में पानी भरें)",
+      93: "Correct the pump installation (पंप स्थापना सही करें)",
+      94: "Free the impeller or clean it (इम्पेलर को फ्री करें या साफ करें)",
+      95: "Correct the float switch operation (फ्लोट स्विच संचालन सही करें)",
+      96: "Clean or unblock the bottom strainer (बॉटम स्ट्रेनर को साफ करें या अनब्लॉक करें)"
   };
 
   // Cause animations mapping - removed all symbols
@@ -131,6 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
     31: "", 32: "", 33: "", 34: "", 35: "", 36: "", 37: "", 38: "", 39: "", 40: "",
     41: "", 42: "", 43: "", 44: "", 45: "", 46: "", 47: "", 48: "", 49: "", 50: "", 51:"",
      52: "", 53: "", 54: "", 55: "", 56: "", 57: "", 58: "", 59: "", 60: "", 61: "", 62: "", 63: "", 64: "", 65: "", 66: "", 67: "", 68: "", 69: "", 70: "", 71: "",
+     72: "", 73: "", 74: "", 75: "", 76: "",
+     77: "", 78: "",
+     79: "",
+     80: "", 81: "", 82: "",
+     83: "", 84: "", 85: "",
+     86: "", 87: "", 88: "", 89: "", 90: "",
+     91: "", 92: "", 93: "",
+     94: "", 95: "", 96: "",
   };
 
   const videoLinks = {
@@ -161,12 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
         pumpTypeHidden.value = pumpItem.dataset.value;
       }
       
-      // Hide or show the "Pump creates noise" problem based on pump type selection
+      // Hide or show problems based on pump type selection
       if (problemSelect) {
         const options = Array.from(problemSelect.options);
+        const problem3Option = options.find(opt => opt.text === 'Insufficient pressure delivered (पानी का प्रेशर कम है)');
         const noiseOption = options.find(opt => opt.text === 'Pump creates noise (पंप शोर करता है)');
+        
+        // Handle problem 8 (Pump creates noise) - hide for 3borwp/6borwp and circulatingpump
         if (noiseOption) {
-          if (pumpItem.dataset.value === '3borwp' || pumpItem.dataset.value === '6borwp') {
+          if (pumpItem.dataset.value === '3borwp' || pumpItem.dataset.value === '6borwp' || pumpItem.dataset.value === 'circulatingpump') {
             noiseOption.disabled = true;
             noiseOption.style.display = 'none';
             // If currently selected, reset selection
@@ -176,6 +237,50 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             noiseOption.disabled = false;
             noiseOption.style.display = '';
+          }
+        }
+        
+        // Handle problem 3 - hide for Inline circulating pump and Dewatering pump
+        if (problem3Option) {
+          if (pumpItem.dataset.value === 'circulatingpump' || pumpItem.dataset.value === 'dewatering') {
+            problem3Option.disabled = true;
+            problem3Option.style.display = 'none';
+            if (problemSelect.value === problem3Option.value) {
+              problemSelect.value = '';
+            }
+          } else {
+            problem3Option.disabled = false;
+            problem3Option.style.display = '';
+          }
+        }
+        
+        // Handle problem 4 - hide for Dewatering pump
+        const problem4Option = options.find(opt => opt.text === 'Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)');
+        if (problem4Option) {
+          if (pumpItem.dataset.value === 'dewatering') {
+            problem4Option.disabled = true;
+            problem4Option.style.display = 'none';
+            if (problemSelect.value === problem4Option.value) {
+              problemSelect.value = '';
+            }
+          } else {
+            problem4Option.disabled = false;
+            problem4Option.style.display = '';
+          }
+        }
+        
+        // Handle problem 6 - hide for Inline circulating pump and Dewatering pump
+        const problem6Option = options.find(opt => opt.text === 'Pump is tripping (पंप ट्रिप कर रहा है)');
+        if (problem6Option) {
+          if (pumpItem.dataset.value === 'circulatingpump' || pumpItem.dataset.value === 'dewatering') {
+            problem6Option.disabled = true;
+            problem6Option.style.display = 'none';
+            if (problemSelect.value === problem6Option.value) {
+              problemSelect.value = '';
+            }
+          } else {
+            problem6Option.disabled = false;
+            problem6Option.style.display = '';
           }
         }
       }
@@ -265,6 +370,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get selected pump type
     const selectedPumpType = pumpTypeHidden?.value || '';
     
+    // Prevent showing causes for problems 3, 6, and 8 if Inline circulating pump is selected
+    if (selectedPumpType === 'circulatingpump') {
+      if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)" ||
+          selected === "Pump is tripping (पंप ट्रिप कर रहा है)" ||
+          selected === "Pump creates noise (पंप शोर करता है)") {
+        solutionBox.innerHTML = "";
+        return;
+      }
+    }
+    
+    // Prevent showing causes for problems 3, 4, and 6 if Dewatering pump is selected
+    if (selectedPumpType === 'dewatering') {
+      if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)" ||
+          selected === "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)" ||
+          selected === "Pump is tripping (पंप ट्रिप कर रहा है)") {
+        solutionBox.innerHTML = "";
+        return;
+      }
+    }
+    
     // Filter causes based on pump type
     if (selectedPumpType === 'centrifugale') {
       // Remove causes 9 (Pump NRV blocked) and 10 (Suction pipe not submerged)
@@ -307,6 +432,239 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectedPumpType === 'shallow') {
       // Remove cause 9 (Pump NRV blocked) from all causes for shallow well pump
       causes = causes.filter(causeId => causeId !== 9);
+      
+      // Problem 1: Remove cause 1
+      if (selected === "Pump does not deliver water (पंप पानी नहीं देता)") {
+        causes = causes.filter(causeId => causeId !== 1);
+      }
+      // Problem 3: Remove cause 55
+      else if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)") {
+        causes = causes.filter(causeId => causeId !== 55);
+      }
+    }
+    
+    // Filter causes for Openwell pump
+    if (selectedPumpType === 'opwell') {
+      // Problem 1: Remove causes 1, 3, 48, 9, and 10 (in numerical order) and add new cause
+      if (selected === "Pump does not deliver water (पंप पानी नहीं देता)") {
+        causes = causes.filter(causeId => ![1, 3, 48, 9, 10].includes(causeId));
+        // Add new cause for openwell pump
+        causes.push(80); // Suction bend is block
+      }
+      // Problem 2: Remove causes 48, 9, 49 and add new cause
+      else if (selected === "Low discharge (पंप का डिस्चार्ज कम है)") {
+        causes = causes.filter(causeId => ![48, 9, 49].includes(causeId));
+        // Add existing cause 67
+        causes.push(67); // Delivery pipe size is more than the pipe size given in name plate
+      }
+      // Problem 3: Remove cause 55 and add new cause
+      else if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)") {
+        causes = causes.filter(causeId => causeId !== 55);
+        // Add existing cause 73
+        causes.push(73); // Total pipe length is more
+      }
+      // Problem 4: Remove causes 3, 9, 48, 1 and add new cause
+      else if (selected === "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)") {
+        causes = causes.filter(causeId => ![3, 9, 48, 1].includes(causeId));
+        // Add existing cause 74
+        causes.push(74); // Pipeline connection is wrong
+      }
+      // Problem 6: Remove cause 56 and add new causes
+      else if (selected === "Pump is tripping (पंप ट्रिप कर रहा है)") {
+        causes = causes.filter(causeId => causeId !== 56);
+        // Add new causes for openwell pump
+        causes.push(81, 71, 82); // Wrong installation of suction bend -down side strainer, No water filled in motor (cause 71), Pump not placed horizontal inside water
+      }
+      // Problem 7: Remove causes 60, 62
+      else if (selected === "Motor winding burn (मोटर की वाइंडिंग जल गई है)") {
+        causes = causes.filter(causeId => ![60, 62].includes(causeId));
+      }
+      // Problem 8: Remove causes 56, 57, 68
+      else if (selected === "Pump creates noise (पंप शोर करता है)") {
+        causes = causes.filter(causeId => ![56, 57, 68].includes(causeId));
+      }
+    }
+    
+    // Filter causes for Sewage pump
+    if (selectedPumpType === 'a1sewage') {
+      // Problem 1: Remove causes 1, 3, 6, 9, 49 and add cause 78
+      if (selected === "Pump does not deliver water (पंप पानी नहीं देता)") {
+        causes = causes.filter(causeId => ![1, 3, 6, 9, 49].includes(causeId));
+        if (!causes.includes(78)) {
+          causes.push(78); // Float switch is faulty or not installed correctly
+        }
+      }
+      // Problem 2: Remove causes 6, 9, 49 and add cause 76
+      else if (selected === "Low discharge (पंप का डिस्चार्ज कम है)") {
+        causes = causes.filter(causeId => ![6, 9, 49].includes(causeId));
+        if (!causes.includes(76)) {
+          causes.push(76); // Low HP rating Pump Selected
+        }
+      }
+      // Problem 3: Remove causes 50, 55 and add new cause
+      else if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)") {
+        causes = causes.filter(causeId => ![50, 55].includes(causeId));
+        if (!causes.includes(83)) {
+          causes.push(83); // Wrong model selection
+        }
+      }
+      // Problem 4: Remove causes 2, 3, 5, 10, 1 and add causes 78, 70
+      else if (selected === "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)") {
+        causes = causes.filter(causeId => ![2, 3, 5, 10, 1].includes(causeId));
+        if (!causes.includes(78)) {
+          causes.push(78); // Float switch is faulty or not installed correctly
+        }
+        if (!causes.includes(70)) {
+          causes.push(70); // Pump jam due to sand
+        }
+      }
+      // Problem 5: Remove cause 50 and add new cause
+      else if (selected === "Pump drawing more current (पंप ज़्यादा करंट खींच रहा है)") {
+        causes = causes.filter(causeId => causeId !== 50);
+        if (!causes.includes(84)) {
+          causes.push(84); // Pump is running with slurry
+        }
+      }
+      // Problem 6: Remove cause 50 and add new cause
+      else if (selected === "Pump is tripping (पंप ट्रिप कर रहा है)") {
+        causes = causes.filter(causeId => causeId !== 50);
+        if (!causes.includes(84)) {
+          causes.push(84); // Pump is running with slurry
+        }
+      }
+      // Problem 7: Remove causes 62, 64, 65 and add new cause
+      else if (selected === "Motor winding burn (मोटर की वाइंडिंग जल गई है)") {
+        causes = causes.filter(causeId => ![62, 64, 65].includes(causeId));
+        if (!causes.includes(85)) {
+          causes.push(85); // Pump not fully submerged inside water
+        }
+      }
+      // Problem 8: Remove causes 53, 55
+      else if (selected === "Pump creates noise (पंप शोर करता है)") {
+        causes = causes.filter(causeId => ![53, 55].includes(causeId));
+      }
+      // Problem 9: Remove causes 53, 55
+      else if (selected === "Pump overheats (पंप अधिक गर्म हो जाता है)") {
+        causes = causes.filter(causeId => ![53, 55].includes(causeId));
+      }
+      
+      // Remove any duplicate causes for sewage pump
+      causes = [...new Set(causes)];
+    }
+    
+    // Filter causes for Inline circulating pump
+    if (selectedPumpType === 'circulatingpump') {
+      // Problem 1: Remove causes 1, 3, 48, 9, 10, 47 and add new causes
+      if (selected === "Pump does not deliver water (पंप पानी नहीं देता)") {
+        causes = causes.filter(causeId => ![1, 3, 48, 9, 10, 47].includes(causeId));
+        // Add new causes for inline circulating pump
+        causes.push(86, 87, 88, 89, 90); // Installation is not correct, Install the pump with delivery pipe line coming from over head tank, Pump should be installed in horizontal position only, Check switch selection -ON/OFF/AUTO for correctness, Flow switch installation is wrong
+      }
+      // Problem 2: Remove causes 6, 48, 9 and add new cause
+      else if (selected === "Low discharge (पंप का डिस्चार्ज कम है)") {
+        causes = causes.filter(causeId => ![6, 48, 9].includes(causeId));
+        // Add new cause for inline circulating pump
+        causes.push(91); // Change switch selection for speed and high discharge
+      }
+      // Problem 4: Remove causes 3, 5, 10, 48, 1 and add new causes
+      else if (selected === "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)") {
+        causes = causes.filter(causeId => ![3, 5, 10, 48, 1].includes(causeId));
+        // Add new causes for inline circulating pump
+        causes.push(92, 93); // No water in suction line, Pump wrong installation
+      }
+      // Problem 7: Remove causes 61, 63, 65
+      else if (selected === "Motor winding burn (मोटर की वाइंडिंग जल गई है)") {
+        causes = causes.filter(causeId => ![61, 63, 65].includes(causeId));
+      }
+      // Problem 8: Remove causes 53, 55
+      else if (selected === "Pump creates noise (पंप शोर करता है)") {
+        causes = causes.filter(causeId => ![53, 55].includes(causeId));
+      }
+      // Problem 9: Remove causes 53, 55
+      else if (selected === "Pump overheats (पंप अधिक गर्म हो जाता है)") {
+        causes = causes.filter(causeId => ![53, 55].includes(causeId));
+      }
+      
+      // Remove any duplicate causes for inline circulating pump
+      causes = [...new Set(causes)];
+    }
+    
+    // Filter causes for Dewatering pump
+    if (selectedPumpType === 'dewatering') {
+      // Problem 1: Remove causes 1, 3, 6, 22, 48, 9, 10, 49 and add new causes
+      if (selected === "Pump does not deliver water (पंप पानी नहीं देता)") {
+        causes = causes.filter(causeId => ![1, 3, 6, 22, 48, 9, 10, 49].includes(causeId));
+        // Add new causes for dewatering pump
+        if (!causes.includes(92)) {
+          causes.push(92); // No water in suction line
+        }
+        if (!causes.includes(94)) {
+          causes.push(94); // Impeller Jam
+        }
+        if (!causes.includes(95)) {
+          causes.push(95); // Float switch operation is not correct
+        }
+        if (!causes.includes(96)) {
+          causes.push(96); // Bottom strainer is block
+        }
+      }
+      // Problem 2: Remove causes 6, 22, 48, 9 and add new cause
+      else if (selected === "Low discharge (पंप का डिस्चार्ज कम है)") {
+        causes = causes.filter(causeId => ![6, 22, 48, 9].includes(causeId));
+        // Add new cause for dewatering pump
+        if (!causes.includes(96)) {
+          causes.push(96); // Bottom strainer is block
+        }
+      }
+      // Problem 7: Remove causes 63, 64, 65
+      else if (selected === "Motor winding burn (मोटर की वाइंडिंग जल गई है)") {
+        causes = causes.filter(causeId => ![63, 64, 65].includes(causeId));
+      }
+      // Problem 8: Remove causes 53, 55, 56
+      else if (selected === "Pump creates noise (पंप शोर करता है)") {
+        causes = causes.filter(causeId => ![53, 55, 56].includes(causeId));
+      }
+      // Problem 9: Remove causes 22, 53, 56, 55
+      else if (selected === "Pump overheats (पंप अधिक गर्म हो जाता है)") {
+        causes = causes.filter(causeId => ![22, 53, 56, 55].includes(causeId));
+      }
+      
+      // Remove any duplicate causes for dewatering pump
+      causes = [...new Set(causes)];
+    }
+    
+    // Filter causes for single stage pressure pump and multistage booster pump
+    if (selectedPumpType === 'SStage' || selectedPumpType === 'MStage') {
+      // Problem 1: Remove causes 1 and 3
+      if (selected === "Pump does not deliver water (पंप पानी नहीं देता)") {
+        causes = causes.filter(causeId => ![1, 3].includes(causeId));
+      }
+      // Problem 3: Remove cause 55 and add new causes
+      else if (selected === "Insufficient pressure delivered (पानी का प्रेशर कम है)") {
+        causes = causes.filter(causeId => causeId !== 55);
+        // Add new causes for pressure pump problems
+        causes.push(72, 73, 74, 75, 76, 5); // Wrong setting of pressure switch, Total pipe length is more, Pipeline correction is wrong, Faucet Pressure rating is wrong, Low HP rating Pump Selected, Leakage in suction line
+      }
+      // Problem 4: Remove causes 3, 1 and add new causes
+      else if (selected === "Pump loses prime after starting (पंप चालू होने के बाद पानी नहीं उठाता)") {
+        causes = causes.filter(causeId => ![3, 1].includes(causeId));
+        // Add new causes for pressure pump problems
+        causes.push(77, 78); // Line pressure is not correct, Float switch is faulty or not installed correctly
+      }
+      // Problem 6: Remove cause 17 and add new causes
+      else if (selected === "Pump is tripping (पंप ट्रिप कर रहा है)") {
+        causes = causes.filter(causeId => causeId !== 17);
+        // Add new causes for pressure pump problems
+        causes.push(79, 72, 5); // Y Strainer installation is wrong- upside, Wrong setting of pressure switch, Leakage in suction line
+      }
+      // Problem 8: Remove causes 53, 55
+      else if (selected === "Pump creates noise (पंप शोर करता है)") {
+        causes = causes.filter(causeId => ![53, 55].includes(causeId));
+      }
+      // Problem 9: Remove causes 16, 53, 55
+      else if (selected === "Pump overheats (पंप अधिक गर्म हो जाता है)") {
+        causes = causes.filter(causeId => ![16, 53, 55].includes(causeId));
+      }
     }
     
     // Filter causes for deep well jet pump
@@ -359,6 +717,34 @@ document.addEventListener('DOMContentLoaded', () => {
         causes = causes.filter(causeId => !removeForMotorBurn.has(causeId));
       }
     }
+
+    // Remove cause 84 (Pump is running with slurry) from all pump types except sewage pump
+    if (selectedPumpType !== 'a1sewage') {
+      causes = causes.filter(causeId => causeId !== 84);
+    }
+
+    // Remove causes 86-96 from all pump types except where they're explicitly added
+    // Causes 86-90, 91, 92-93: Only for Inline circulating pump (circulatingpump)
+    // Causes 92, 94-96: Only for Dewatering pump (dewatering)
+    // Cause 92: Used by both circulatingpump and dewatering
+    
+    // Remove causes 94-96 if not dewatering (these are dewatering-specific)
+    if (selectedPumpType !== 'dewatering') {
+      causes = causes.filter(causeId => ![94, 95, 96].includes(causeId));
+    }
+    
+    // Remove causes 86-91, 93 if not circulatingpump (these are circulating pump-specific)
+    if (selectedPumpType !== 'circulatingpump') {
+      causes = causes.filter(causeId => ![86, 87, 88, 89, 90, 91, 93].includes(causeId));
+    }
+    
+    // Remove cause 92 if not circulatingpump or dewatering (used by both)
+    if (selectedPumpType !== 'circulatingpump' && selectedPumpType !== 'dewatering') {
+      causes = causes.filter(causeId => causeId !== 92);
+    }
+
+    // Remove any duplicate causes to avoid showing the same cause twice
+    causes = [...new Set(causes)];
 
     const list = causes.map(num => {
       // Special handling for different causes based on pump types
@@ -521,14 +907,38 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Form submit handler
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const selectedProblem = problemSelect.value;
     const selectedPumpType = pumpTypeHidden?.value || '';
 
-    if (!selectedProblem) {
-      resultBox.innerHTML = `⚠️ Please select a problem.`;
+    // Validate - check for default selections
+    if (!selectedProblem || selectedProblem === '') {
+      resultBox.innerHTML = `⚠️ Please select a problem (समस्या चुनें).`;
       return;
+    }
+
+    if (!selectedPumpType || selectedPumpType === '') {
+      resultBox.innerHTML = `⚠️ Please select a pump type (पंप प्रकार चुनें).`;
+      return;
+    }
+
+    // Save to database
+    try {
+      const selectedItem = document.querySelector(`[data-value="${selectedPumpType}"]`);
+      const pumpName = selectedItem ? selectedItem.querySelector('.pump-name').textContent : selectedPumpType;
+      
+      await pumpDB.saveProblem({
+        pumpType: selectedPumpType,
+        pumpName: pumpName,
+        problem: selectedProblem,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      });
+      
+      console.log('Problem saved to database');
+    } catch (error) {
+      console.error('Error saving problem to database:', error);
     }
 
     let message = `✅ Submitted. Problem: <strong>${selectedProblem}</strong>`;
